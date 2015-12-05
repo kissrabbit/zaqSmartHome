@@ -1,0 +1,72 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.zaq</groupId>
+  <artifactId>com.zaq.smartHome</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  
+  		<repositories>
+  			<repository>
+				<id>oschinaMavenThirdparty</id>
+				<name>oschinaMavenThirdparty</name>
+				<url>http://maven.oschina.net/content/repositories/thirdparty/</url>
+				<snapshots>
+					<enabled>false</enabled>
+				</snapshots>
+			</repository>
+	  		<repository>
+				<id>central</id>
+				<name>Central Repository</name>
+				<url>http://repo.maven.apache.org/maven2</url>
+				<snapshots>
+					<enabled>false</enabled>
+				</snapshots>
+			</repository>
+			<repository>
+				<id>spy</id>
+				<name>Spy Repository</name>
+				<url>http://files.couchbase.com/maven2/</url>
+				<snapshots>
+					<enabled>false</enabled>
+				</snapshots>
+			</repository>
+			<repository>
+				<id>xerces</id>
+				<name>xerces</name>
+				<url>https://xerces.apache.org/xerces2-j/</url>
+				<snapshots>
+					<enabled>false</enabled>
+				</snapshots>
+			</repository>
+			<repository>
+				<id>proxool</id>
+				<name>proxool</name>
+				<url>http://proxool.cvs.sourceforge.net/viewvc/proxool/</url>
+				<snapshots>
+					<enabled>false</enabled>
+				</snapshots>
+			</repository>
+			<repository>
+				<id>oss-snapshots-repo</id>
+				<name>Sonatype OSS Maven Repository</name>
+				<url>https://oss.sonatype.org/content/groups/public</url>
+				<snapshots>
+					<enabled>true</enabled>
+					<updatePolicy>always</updatePolicy>
+				</snapshots>
+			</repository>
+		</repositories>
+	<build/>
+	<dependencies>
+		<dependency>
+		    <groupId>com.pi4j</groupId>
+		    <artifactId>pi4j-core</artifactId>
+		   <version>1.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apdplat</groupId>
+		    <artifactId>deep-qa</artifactId>
+		    <version>1.2</version>
+		</dependency>
+	</dependencies>
+	
+</project>
