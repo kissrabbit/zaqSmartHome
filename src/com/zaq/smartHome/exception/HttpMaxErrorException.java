@@ -10,10 +10,12 @@ import com.zaq.smartHome.util.AppUtil;
  * 2015年12月7日
  *
  */
-public class HttpMaxErrorException extends Exception{
+public class HttpMaxErrorException extends HttpRequestException{
 	private static final long serialVersionUID = 1L;
 	private static Logger logger=Logger.getLogger(HttpMaxErrorException.class);
+	
 	public HttpMaxErrorException(String url){
+		super(url);
 		logger.info("请求："+url+ " 失败，超过了最大错误请求数("+AppUtil.getMaxError()+")", this);
 	}
 	

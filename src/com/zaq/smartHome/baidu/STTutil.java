@@ -3,105 +3,128 @@ package com.zaq.smartHome.baidu;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.message.BasicHeader;
 import org.json.JSONObject;
 
 import com.zaq.smartHome.util.AppUtil;
 import com.zaq.smartHome.util.BDUtil;
+import com.zaq.smartHome.util.HttpPoolUtil;
 
 /**
  * 语音转文字
- * @author zaqzaq
- * 2015年12月5日
- *
+ * 
+ * @author zaqzaq 2015年12月5日
+ * 
  */
 public class STTutil {
 
-    private static final String serverURL = "http://vop.baidu.com/server_api";
+	private static final String API_URI = "http://vop.baidu.com/server_api";
 
-    public static void main(String[] args) throws Exception {
-    	AppUtil.init();
-    	File file=new File("mp3"+File.separator+"xxx_new.wav");
-        
-    	String retVal=done(FileUtils.readFileToByteArray(file));
-    	
-    	System.out.println(retVal);
-    }
-    private static String done(byte[] mp3Byte) throws Exception {
-        HttpURLConnection conn = (HttpURLConnection) new URL(serverURL
-                + "?cuid=" + AppUtil.getPropertity("cuid") + "&token=" + BDUtil.getToken()).openConnection();
+	/**
+	 * 将fileFormat格式的音频文件soundFile转成文字
+	 * @param soundFile
+	 * @param fileFormat
+	 * @return
+	 * @throws Exception
+	 */
+	public static String done(File soundFile,String fileFormat) throws Exception {
+		
+		return done(FileUtils.readFileToByteArray(soundFile),fileFormat);
+	}
+	
+	public static String done(byte[] soundByte,String fileFormat) throws Exception {
+		
+		ByteArrayEntity byteArrayEntity=new ByteArrayEntity(soundByte);
+		
+		return HttpPoolUtil.postRetStr(API_URI + "?cuid=" + AppUtil.getPropertity("cuid") + "&token=" + BDUtil.getToken(), 
+				new BasicHeader("Content-Type", "audio/"+fileFormat+"; rate=8000"),byteArrayEntity);
 
-        // add request header
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("Content-Type", "audio/wav; rate=8000");
+	}
+	
+	public static void main(String[] args) throws Exception {
+		AppUtil.init();
+		File file = new File("sound" + File.separator + "xxx_new.wav");
 
-        conn.setDoInput(true);
-        conn.setDoOutput(true);
+		String retVal = done(FileUtils.readFileToByteArray(file),"wav");
 
-        // send request
-        DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
-        wr.write(mp3Byte);
-        wr.flush();
-        wr.close();
+		System.out.println(retVal);
+	}
 
-       return  printResponse(conn);
-    }
-    private static String printResponse(HttpURLConnection conn) throws Exception {
-        if (conn.getResponseCode() != 200) {
-            // request error
-            return "";
-        }
-        InputStream is = conn.getInputStream();
-        BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-        String line;
-        StringBuffer response = new StringBuffer();
-        while ((line = rd.readLine()) != null) {
-            response.append(line);
-            response.append('\r');
-        }
-        rd.close();
-        System.out.println(new JSONObject(response.toString()).toString(4));
-        return response.toString();
-    }
-//    private static void method1() throws Exception {
-//        File pcmFile = new File(testFileName);
-//        HttpURLConnection conn = (HttpURLConnection) new URL(serverURL).openConnection();
-//
-//        // construct params
-//        JSONObject params = new JSONObject();
-//        params.put("format", "pcm");
-//        params.put("rate", 8000);
-//        params.put("channel", "1");
-//        params.put("token", token);
-//        params.put("cuid", cuid);
-//        params.put("len", pcmFile.length());
-//        params.put("speech", DatatypeConverter.printBase64Binary(loadFile(pcmFile)));
-//
-//        // add request header
-//        conn.setRequestMethod("POST");
-//        conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-//
-//        conn.setDoInput(true);
-//        conn.setDoOutput(true);
-//
-//        // send request
-//        DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
-//        wr.writeBytes(params.toString());
-//        wr.flush();
-//        wr.close();
-//
-//        printResponse(conn);
-//    }
+	
+	@Deprecated
+	private static String done1(byte[] soundByte) throws Exception {
+		HttpURLConnection conn = (HttpURLConnection) new URL(API_URI + "?cuid=" + AppUtil.getPropertity("cuid") + "&token=" + BDUtil.getToken()).openConnection();
 
+		// add request header
+		conn.setRequestMethod("POST");
+		conn.setRequestProperty("Content-Type", "audio/wav; rate=8000");
+
+		conn.setDoInput(true);
+		conn.setDoOutput(true);
+
+		// send request
+		DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+		wr.write(soundByte);
+		wr.flush();
+		wr.close();
+
+		return printResponse(conn);
+	}
+	@Deprecated
+	private static void done1(File soundFile) throws Exception {
+		HttpURLConnection conn = (HttpURLConnection) new URL(API_URI).openConnection();
+
+		// construct params
+		JSONObject params = new JSONObject();
+		params.put("format", "wav");
+		params.put("rate", 8000);
+		params.put("channel", "1");
+		params.put("token", AppUtil.getPropertity("cuid"));
+		params.put("cuid", AppUtil.getPropertity("cuid"));
+		params.put("len", soundFile.length());
+		params.put("speech", DatatypeConverter.printBase64Binary(FileUtils.readFileToByteArray(soundFile)));
+
+		// add request header
+		conn.setRequestMethod("POST");
+		conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+
+		conn.setDoInput(true);
+		conn.setDoOutput(true);
+
+		// send request
+		DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+		wr.writeBytes(params.toString());
+		wr.flush();
+		wr.close();
+
+		printResponse(conn);
+	}
+
+	@Deprecated
+	private static String printResponse(HttpURLConnection conn) throws Exception {
+		if (conn.getResponseCode() != 200) {
+			// request error
+			return "";
+		}
+		InputStream is = conn.getInputStream();
+		BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+		String line;
+		StringBuffer response = new StringBuffer();
+		while ((line = rd.readLine()) != null) {
+			response.append(line);
+			response.append('\r');
+		}
+		rd.close();
+		System.out.println(new JSONObject(response.toString()).toString(4));
+		return response.toString();
+	}
 }

@@ -2,12 +2,14 @@ package com.zaq.smartHome.util;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
+import java.io.UnsupportedEncodingException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpRequest;
@@ -32,6 +34,7 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
@@ -109,13 +112,12 @@ public class HttpPoolUtil {
 	 * @return 字符体
 	 * @throws IOException 
 	 * @throws ParseException 
-	 * @throws HttpRequestException 
 	 * @throws HttpMaxErrorException 
 	 */
 	public static String postRetStr(String postUrl,NameValuePair... parm) {
 			try {
 				return EntityUtils.toString(post(postUrl, parm),"UTF-8");
-			} catch (ParseException | IOException | HttpMaxErrorException e) {
+			} catch (ParseException | IOException | HttpRequestException e) {
 				logger.error("请求："+postUrl+" 异常",e);
 				return "";
 			}
@@ -133,27 +135,49 @@ public class HttpPoolUtil {
 	public static byte[] postRetMulti(String postUrl,NameValuePair... parm){
 			try {
 				return  EntityUtils.toByteArray(post(postUrl, parm));
-			} catch (IOException | HttpMaxErrorException e) {
+			} catch (IOException | HttpRequestException e) {
 				logger.error("请求多媒体文体："+postUrl+" 异常",e);
 				return null;
 			}
 	}
 	
-	private static HttpEntity post(String postUrl,NameValuePair... parm)throws HttpMaxErrorException{
+	public static String postRetStr(String postUrl,Header header,HttpEntity requestEntity){
+		try {
+			return  EntityUtils.toString(post(postUrl, header,requestEntity),"UTF-8");
+		} catch (IOException | HttpMaxErrorException e) {
+			logger.error("请求："+postUrl+" 异常",e);
+			return null;
+		}
+}
+	
+	private static HttpEntity post(String postUrl,NameValuePair... parm)throws HttpRequestException{
+		return post(postUrl, new BasicHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"), parm);
+	}
+	
+	private static HttpEntity post(String postUrl,Header header,NameValuePair... parm)throws HttpRequestException{
+		
+		try {
+			return post(postUrl, header, new UrlEncodedFormEntity(Arrays.asList(parm), "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			throw new HttpRequestException(postUrl, e);
+		}
+	}
+	
+	private static HttpEntity post(String postUrl,Header header,HttpEntity requestEntity)throws HttpMaxErrorException{
 		if(HttpUtil.hasMaxError(postUrl)){
 			throw new HttpMaxErrorException(postUrl);
 		}
 		CloseableHttpClient client=getClientByPool();
 		HttpPost request=new HttpPost(postUrl);
-		request.addHeader("Content-Type","application/x-www-form-urlencoded; charset=UTF-8");
+		request.addHeader(header);
 		HttpEntity retVal=null;
 		try {
-			request.setEntity(new UrlEncodedFormEntity(Arrays.asList(parm), "UTF-8"));
+			request.setEntity(requestEntity);
 			CloseableHttpResponse response=client.execute(request);
 			if(response.getStatusLine().getStatusCode()!=200){
 				logger.error(postUrl+"请求异常：statusCode="+response.getStatusLine().getStatusCode());
 				request.abort();
-				return post(postUrl, parm);
+				return post(postUrl,header, requestEntity);
 			}
 			retVal = response.getEntity();
 		} catch (HttpMaxErrorException e) {
@@ -161,7 +185,7 @@ public class HttpPoolUtil {
 		} catch (Exception e) {
 			logger.error(postUrl+"请求异常",e);
 			request.abort();
-			return post(postUrl, parm);
+			return post(postUrl,header, requestEntity);
 		}  
 		
 		logger.debug("response:"+retVal);
