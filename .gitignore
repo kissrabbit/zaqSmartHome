@@ -2,3 +2,5 @@
 /target
 /logs
 /logs/zaqSmartHome/*.log
+deep-qa
+/.gitignore
