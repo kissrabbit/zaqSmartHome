@@ -15,6 +15,7 @@ import org.apache.log4j.PropertyConfigurator;
 public class AppUtil {
 	private static String log4j="log4j.properties";
 	private static String config="config.properties";
+	private static String configJdbc="jdbc.properties";
 	private static Properties props ;
 	
 	public static void init() throws IOException {
@@ -23,9 +24,9 @@ public class AppUtil {
 		
 		props= new Properties();
 		InputStream isConfig = new BufferedInputStream(AppUtil.class.getClassLoader().getResourceAsStream(config));
-
 		props.load(isConfig);
-		
+		InputStream isConfigJdbc = new BufferedInputStream(AppUtil.class.getClassLoader().getResourceAsStream(configJdbc));
+		props.load(isConfigJdbc);
 		HttpPoolUtil.init();
 	}
 
