@@ -40,7 +40,26 @@ public class STTutil {
 		
 		return done(FileUtils.readFileToByteArray(soundFile),fileFormat);
 	}
-	
+	/**
+	 * 默认音频为WAV格式
+	 * @param soundFile
+	 * @return
+	 * @throws Exception
+	 */
+	public static String done(File soundFile) throws Exception {
+		
+		return done(FileUtils.readFileToByteArray(soundFile),"wav");
+	}
+	/**
+	 * 默认音频为WAV格式
+	 * @param soundFile
+	 * @return
+	 * @throws Exception
+	 */
+	public static String done(byte[] soundByte) throws Exception {
+		
+		return done(soundByte,"wav");
+	}
 	public static String done(byte[] soundByte,String fileFormat) throws Exception {
 		
 		ByteArrayEntity byteArrayEntity=new ByteArrayEntity(soundByte);
