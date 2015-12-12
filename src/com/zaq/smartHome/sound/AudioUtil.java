@@ -6,6 +6,8 @@ import java.io.IOException;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.LineUnavailableException;
 
+import org.apache.log4j.Logger;
+
 import com.zaq.smartHome.baidu.STTutil;
 import com.zaq.smartHome.baidu.TTSutil;
 import com.zaq.smartHome.exception.SystemException;
@@ -18,6 +20,7 @@ import com.zaq.smartHome.util.ThreadPool;
  *
  */
 public class AudioUtil {
+	private static Logger logger=Logger.getLogger(AudioUtil.class);
 	/**
 	 * 录音的临时文件路径
 	 */
@@ -30,6 +33,17 @@ public class AudioUtil {
 	 * 第三方转化的音频文件
 	 */
 	public static final String AD_CONVER="sound" + File.separator + "conver";
+	
+	/**
+	 * 播个百度语音合成超时
+	 */
+	public static void playBDtimeout(){
+		try {
+			Player.play(new File(AD_INIT+File.separator+"bd_timeout.wav"));
+		} catch (Exception e) {
+			logger.error("播个百度语音合成超时都不行么！XXX", e);
+		}
+	}
 	
 	// 定义音频格式
 	private static AudioFormat af = null;
@@ -96,16 +110,21 @@ public class AudioUtil {
 		
 		final String audioFilePath=AD_INIT+File.separator+"meSay2bd.wav";
 		System.out.println("xx:"+text.toString());
-		TTSutil.done(text.toString(),audioFilePath,new Runnable() {
-			@Override
-			public void run() {
-				try {
-					Player.play(new File(audioFilePath));
-				} catch (LineUnavailableException | SystemException | IOException e) {
-					e.printStackTrace();
+		try {
+			TTSutil.done(text.toString(),audioFilePath,new Runnable() {
+				@Override
+				public void run() {
+					try {
+						Player.play(new File(audioFilePath));
+					} catch (LineUnavailableException | SystemException | IOException e) {
+						e.printStackTrace();
+					}
 				}
-			}
-		});
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+			playBDtimeout();
+		}
 		
 		
 	}

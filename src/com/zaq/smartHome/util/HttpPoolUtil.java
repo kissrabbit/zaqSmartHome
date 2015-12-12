@@ -181,7 +181,7 @@ public class HttpPoolUtil {
 			}
 			retVal = response.getEntity();
 		} catch (HttpMaxErrorException e) {
-			throw e;
+			throw e;//防止死循环
 		} catch (Exception e) {
 			logger.error(postUrl+"请求异常",e);
 			request.abort();
