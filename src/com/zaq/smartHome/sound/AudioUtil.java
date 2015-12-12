@@ -1,8 +1,16 @@
 package com.zaq.smartHome.sound;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.LineUnavailableException;
+
+import com.zaq.smartHome.baidu.STTutil;
+import com.zaq.smartHome.baidu.TTSutil;
+import com.zaq.smartHome.exception.SystemException;
+import com.zaq.smartHome.util.AppUtil;
+import com.zaq.smartHome.util.ThreadPool;
 /**
  * 音频工具类
  * @author zaqzaq
@@ -10,7 +18,19 @@ import javax.sound.sampled.AudioFormat;
  *
  */
 public class AudioUtil {
+	/**
+	 * 录音的临时文件路径
+	 */
 	public static final String TMP_RECORD="sound" + File.separator + "tmpSound.wav";
+	/**
+	 * 自己录音的音频文件
+	 */
+	public static final String AD_INIT="sound" + File.separator + "init";
+	/**
+	 * 第三方转化的音频文件
+	 */
+	public static final String AD_CONVER="sound" + File.separator + "conver";
+	
 	// 定义音频格式
 	private static AudioFormat af = null;
 
@@ -52,4 +72,41 @@ public class AudioUtil {
 		return new AudioFormat(sampleRate, sampleSizeInBits, channels, signed, bigEndian);
 	}
 
+	
+	public static void main(String[] args) throws Exception {
+		AppUtil.init();
+		final StringBuilder text=new StringBuilder();;
+		ThreadPool.execute(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					text.append(STTutil.done(Record.captureRetByte(), "wav")); 
+					System.out.println("x:"+text.toString());
+					;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		Thread.sleep(3000l);
+		Record.stop();
+		//等STT解析完
+		Thread.sleep(5000l);
+		
+		final String audioFilePath=AD_INIT+File.separator+"meSay2bd.wav";
+		System.out.println("xx:"+text.toString());
+		TTSutil.done(text.toString(),audioFilePath,new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Player.play(new File(audioFilePath));
+				} catch (LineUnavailableException | SystemException | IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		
+	}
 }

@@ -63,9 +63,10 @@ public class STTutil {
 	public static String done(byte[] soundByte,String fileFormat) throws Exception {
 		
 		ByteArrayEntity byteArrayEntity=new ByteArrayEntity(soundByte);
+		String httpRes=HttpPoolUtil.postRetStr(API_URI + "?cuid=" + AppUtil.getPropertity("cuid") + "&token=" + BDUtil.getToken(), 
+												new BasicHeader("Content-Type", "audio/"+fileFormat+"; rate=8000"),byteArrayEntity);
 		
-		return HttpPoolUtil.postRetStr(API_URI + "?cuid=" + AppUtil.getPropertity("cuid") + "&token=" + BDUtil.getToken(), 
-				new BasicHeader("Content-Type", "audio/"+fileFormat+"; rate=8000"),byteArrayEntity);
+		return (String) new JSONObject(httpRes).getJSONArray("result").get(0);
 
 	}
 	
@@ -142,7 +143,8 @@ public class STTutil {
 		File file = new File("sound" + File.separator + "xxx_new.wav");
 
 		String retVal = done(FileUtils.readFileToByteArray(file),"wav");
-
 		System.out.println(retVal);
+		System.out.println(new JSONObject(retVal).toString(4));
+		System.out.println(new JSONObject(retVal).getJSONArray("result").get(0));
 	}
 }

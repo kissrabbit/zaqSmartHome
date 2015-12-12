@@ -93,8 +93,23 @@ public class Player {
 		sd.start();
 	}
 	
-	public static void main(String[] args) throws LineUnavailableException, SystemException, IOException {
-		play(new File(AudioUtil.TMP_RECORD));
-		play(new File(AudioUtil.TMP_RECORD));
+	public static void main(String[] args) throws LineUnavailableException, SystemException, IOException{
+//		play(new File(AudioUtil.TMP_RECORD));
+//		play(new File(AudioUtil.AD_INIT+File.separator+"meSay2bd.wav"));
+//		play(new File("sound"+File.separator+"test1.wav"));
+		play(new File("sound"+File.separator+"xxx_new.wav"));
+//		play(new File("sound"+File.separator+"test1.mp3"));
+		 
+//             File musicFile=new File("sound"+File.separator+"test1.wav");//得到一个MP3文件,不加斜杠表示根目录  
+//             if(musicFile.exists()){    
+//                 MediaLocator  locator=new MediaLocator("file:"+musicFile.getAbsolutePath()); 
+//                 javax.media.Player player=Manager.createPlayer(locator);    
+//                 player = Manager.createRealizedPlayer(locator);    
+//                 player.prefetch();// 预读文件    
+//                 player.start();//播放 
+//             }else{    
+//                 System.err.println(musicFile+"  找不到");    
+//             }    
+          
 	}
 }
