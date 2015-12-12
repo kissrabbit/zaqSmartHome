@@ -69,16 +69,6 @@ public class STTutil {
 
 	}
 	
-	public static void main(String[] args) throws Exception {
-		AppUtil.init();
-		File file = new File("sound" + File.separator + "xxx_new.wav");
-
-		String retVal = done(FileUtils.readFileToByteArray(file),"wav");
-
-		System.out.println(retVal);
-	}
-
-	
 	@Deprecated
 	private static String done1(byte[] soundByte) throws Exception {
 		HttpURLConnection conn = (HttpURLConnection) new URL(API_URI + "?cuid=" + AppUtil.getPropertity("cuid") + "&token=" + BDUtil.getToken()).openConnection();
@@ -145,5 +135,14 @@ public class STTutil {
 		rd.close();
 		System.out.println(new JSONObject(response.toString()).toString(4));
 		return response.toString();
+	}
+	
+	public static void main(String[] args) throws Exception {
+		AppUtil.init();
+		File file = new File("sound" + File.separator + "xxx_new.wav");
+
+		String retVal = done(FileUtils.readFileToByteArray(file),"wav");
+
+		System.out.println(retVal);
 	}
 }

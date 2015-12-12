@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
@@ -33,8 +32,6 @@ public class Record {
 	private Record() {
 	}
 
-	// 定义录音格式
-	private static AudioFormat af = null;
 	// 定义目标数据行,可以从中读取音频数据,该 TargetDataLine 接口提供从目标数据行的缓冲区读取所捕获数据的方法。
 	private static TargetDataLine td = null;
 	private static boolean stopflag;
@@ -43,42 +40,6 @@ public class Record {
 	private static boolean isRecordIng = false;
 	// 定义存放录音的字节数组,作为缓冲区
 	private static byte bts[] = new byte[10000];
-
-	public static void main(String[] args) throws Exception {
-		AppUtil.init();
-
-		ThreadPool.execute(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					System.out.println(STTutil.done(captureRetByte(), "wav"));
-					;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-
-		Thread.sleep(3000l);
-		stop();
-		Thread.sleep(1000l);
-		ThreadPool.execute(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					System.out.println(STTutil.done(captureRetFile(), "pcm"));
-					;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-		//
-		Thread.sleep(5000l);
-		stop();
-	}
 
 	/**
 	 * 停止录音
@@ -158,18 +119,23 @@ public class Record {
 		
 	}
 	
-	// 保存录音
-	private static File save(byte[] audioData) throws SystemException {
+	/**
+	 * 保存录音
+	 * @param audioArrayByte 内存中录制的音频字节
+	 * @return
+	 * @throws SystemException
+	 */
+	private static File save(byte[] audioArrayByte) throws SystemException {
+		
+		ByteArrayInputStream bais = new ByteArrayInputStream(audioArrayByte);
 		// 取得录音输入流
-		af = getAudioFormat8();
-		ByteArrayInputStream bais = new ByteArrayInputStream(audioData);
-		AudioInputStream ais = new AudioInputStream(bais, af, audioData.length / af.getFrameSize());
+		AudioInputStream ais = new AudioInputStream(bais, AudioUtil.getAudioFormat8(), audioArrayByte.length / AudioUtil.getAudioFormat8().getFrameSize());
 		// 定义最终保存的文件名
 		// 写入文件
 		try {
 			// 以当前的时间命名录音的名字
 			// 将录音的文件存放到F盘下语音文件夹下
-			File file = new File("sound" + File.separator + "tmpSound.wav");
+			File file = new File(AudioUtil.TMP_RECORD);
 			AudioSystem.write(ais, AudioFileFormat.Type.WAVE, file);
 			
 			return file;
@@ -195,50 +161,54 @@ public class Record {
 	 * @throws LineUnavailableException
 	 */
 	private static void openTD() throws LineUnavailableException {
-		// af为AudioFormat也就是音频格式
-		af = getAudioFormat8();
 		if (null == info) {
-			info = new DataLine.Info(TargetDataLine.class, af);
+			info = new DataLine.Info(TargetDataLine.class, AudioUtil.getAudioFormat8());
 		}
 		// 获取录音设备
 		td = (TargetDataLine) (AudioSystem.getLine(info));
 		// 打开具有指定格式的行，这样可使行获得所有所需的系统资源并变得可操作。
-		td.open(af);
+		td.open(AudioUtil.getAudioFormat8());
 		// 允许某一数据行执行数据 I/O
 		td.start();
 
 		isRecordIng = true;
 	}
 
-	// 设置AudioFormat的参数
-	private static AudioFormat getAudioFormat8() {
-		if (null != af) {
-			return af;
-		}
-		// 下面注释部分是另外一种音频格式，两者都可以
-		AudioFormat.Encoding encoding = AudioFormat.Encoding.PCM_SIGNED;
-		float rate = 8000f;
-		int sampleSize = 16;
-		boolean bigEndian = true;
-		int channels = 1;// 单声道为1，立体声为2
-		return new AudioFormat(encoding, rate, sampleSize, channels, (sampleSize / 8) * channels, rate, bigEndian);
+	
+	public static void main(String[] args) throws Exception {
+		AppUtil.init();
 
+		ThreadPool.execute(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					System.out.println(STTutil.done(captureRetByte(), "wav"));
+					;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+
+		Thread.sleep(3000l);
+		stop();
+		Thread.sleep(1000l);
+		ThreadPool.execute(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					System.out.println(STTutil.done(captureRetFile(), "pcm"));
+					;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		//
+		Thread.sleep(5000l);
+		stop();
 	}
 
-	@Deprecated
-	private AudioFormat getAudioFormat16() {
-		// 下面注释部分是另外一种音频格式，两者都可以
-		AudioFormat.Encoding encoding = AudioFormat.Encoding.PCM_SIGNED;
-		// 采样率是每秒播放和录制的样本数
-		float sampleRate = 16000.0F;
-		// 采样率8000,11025,16000,22050,44100
-		// sampleSizeInBits表示每个具有此格式的声音样本中的位数
-		int sampleSizeInBits = 16;
-		// 8,16
-		int channels = 1;
-		// 单声道为1，立体声为2
-		boolean signed = true;
-		boolean bigEndian = true;
-		return new AudioFormat(sampleRate, sampleSizeInBits, channels, signed, bigEndian);
-	}
 }
