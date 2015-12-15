@@ -1,0 +1,60 @@
+package com.zaq.smartHome.controll;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+/**
+ * 延时任务容器
+ * @author zaqzaq
+ * 2015年12月15日
+ *
+ */
+public class CmdDelayTaskCollection {
+	private CmdDelayTaskCollection(){}
+	
+	private static ScheduledExecutorService executor=Executors.newScheduledThreadPool(5) ;
+	
+	private static Map<String, TimerTask> delayTasks=new HashMap<String, TimerTask>();
+	
+	/**
+	 * 取消或已完成任务
+	 * @return
+	 */
+	public static void delDelayTask(String code,Integer type){
+		String key=genKey(code, type);
+		if(delayTasks.containsKey(key)){
+			delayTasks.get(key) .cancel();
+		}
+	}
+	
+	/**
+	 * 是否存在延时关闭的指令任务
+	 * @return
+	 */
+	public static boolean hasDelayTask(String code,Integer type){
+		return delayTasks.containsKey(genKey(code, type));
+	}
+	/**
+	 * 添加一条延时 指令任务
+	 * @param code
+	 * @param type
+	 * @return
+	 */
+	public static void addDelayTask(String code,Integer type,TimerTask task,Integer delay){
+		delDelayTask(code, type);
+		
+		executor.schedule(task, delay, TimeUnit.MILLISECONDS);
+		
+		delayTasks.put(genKey(code, type), task);
+		
+	}
+	/**
+	 * key = type+"--"+code
+	 */
+	private static String genKey(String code,Integer type){
+		return type+"--"+code;
+	}
+}

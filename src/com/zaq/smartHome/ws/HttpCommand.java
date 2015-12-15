@@ -21,14 +21,14 @@ public class HttpCommand {
 	private static Logger logger=Logger.getLogger(HttpCommand.class);
 	private static WeakHashMap<Long, Cmd> cmdCache=new WeakHashMap<>();
 	
-	@RequestMapping("/{id}")  
+	@RequestMapping("/{id}/{delay}")  
 	/**
 	 * 执行http请求的指令
 	 * @param id 指令的ID
 	 * @param delay 延时执行的关闭指令时长
 	 * @return
 	 */
-    public boolean exec(@PathVariable("id") Long id,Integer delay) {  
+    public boolean exec(@PathVariable("id") Long id,@PathVariable("delay")Integer delay) {  
 		Cmd cmd=CmdUtil.getByID(id);
 		
 		if(null!=cmd){
@@ -49,9 +49,10 @@ public class HttpCommand {
 				baseCmd=new RF433Cmd(cmd,delay);
 				break;
 			default:
+				logger.error("没有找到指令为："+id+"的ID");
 				return false;
 		}
-		baseCmd.exec();
+		baseCmd.run();
 		
         return true;  
     }  

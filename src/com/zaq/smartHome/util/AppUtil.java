@@ -53,5 +53,11 @@ public class AppUtil {
 	public static int getMaxError(){
 		return Integer.valueOf(getPropertity("http.post.maxError",10));
 	}
-
+	
+	public static String getXDCookie(){
+		return getPropertity("xd.cookie","BDUSS=VZySDVuWjltUzdyZlM4Z0FnRERVQ0lUejRyblFuWFZvbERzTUgxckMzZWRDWmRXQVFBQUFBJCQAAAAAAAAAAAEAAAB1ZkQIMzgyNTY2Njk3AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJ18b1adfG9WL");
+	}
+	public static String getXDUri(){
+		return getPropertity("xd.uri","https://sp0.baidu.com/yLsHczq6KgQFm2e88IuM_a/s?sample_name=bear_brain&");
+	}
 }	

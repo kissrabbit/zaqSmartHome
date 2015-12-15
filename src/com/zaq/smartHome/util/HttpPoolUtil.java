@@ -4,8 +4,12 @@ import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.io.UnsupportedEncodingException;
 import java.net.UnknownHostException;
+import java.nio.charset.Charset;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 
@@ -16,7 +20,6 @@ import org.apache.http.HttpRequest;
 import org.apache.http.NameValuePair;
 import org.apache.http.NoHttpResponseException;
 import org.apache.http.ParseException;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -24,6 +27,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.ConnectTimeoutException;
@@ -35,7 +39,10 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeader;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
@@ -58,10 +65,26 @@ public class HttpPoolUtil {
 	public static void init(){
 		ConnectionSocketFactory plainsf = PlainConnectionSocketFactory.getSocketFactory();
 	    LayeredConnectionSocketFactory sslsf = SSLConnectionSocketFactory.getSocketFactory();
+	   
+		try {
+			SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
+			     //信任所有 https
+			     public boolean isTrusted(X509Certificate[] chain,
+			                     String authType) throws CertificateException {
+			         return true;
+			     }
+			 }).build();
+			
+			sslsf = new SSLConnectionSocketFactory(sslContext);
+			
+		} catch (Exception e) {
+			logger.error("https请求初始化失败", e);
+		}
 	    Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
 	            .register("http", plainsf)
 	            .register("https", sslsf)
 	            .build();
+	    
 	    cm = new PoolingHttpClientConnectionManager(registry);
 	    // 将最大连接数增加到http.pool.maxTotal
 	    cm.setMaxTotal(AppUtil.getPropertity("http.pool.maxTotal",200));
@@ -122,7 +145,14 @@ public class HttpPoolUtil {
 				return "";
 			}
 	}
-	
+	public static String postRetStr(String postUrl,Header header,NameValuePair... parm) {
+		try {
+			return EntityUtils.toString(post(postUrl,header, parm),"UTF-8");
+		} catch (ParseException | IOException | HttpRequestException e) {
+			logger.error("请求："+postUrl+" 异常",e);
+			return "";
+		}
+}
 	
 	/**
 	 * 组装http请求
@@ -148,7 +178,7 @@ public class HttpPoolUtil {
 			logger.error("请求："+postUrl+" 异常",e);
 			return null;
 		}
-}
+	}
 	
 	private static HttpEntity post(String postUrl,NameValuePair... parm)throws HttpRequestException{
 		return post(postUrl, new BasicHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"), parm);
@@ -195,6 +225,49 @@ public class HttpPoolUtil {
 		return retVal;
 	}
 	
+	public static String getRetStr(String getUrl,Header header,NameValuePair... parms){
+		try {
+			return  EntityUtils.toString(get(getUrl, header,parms),"UTF-8");
+		} catch (IOException | HttpMaxErrorException e) {
+			logger.error("请求："+getUrl+" 异常",e);
+			return null;
+		}
+	}
+	
+	private static HttpEntity get(String getUrl,Header header,NameValuePair... parms)throws HttpMaxErrorException{
+		if(HttpUtil.hasMaxError(getUrl)){
+			throw new HttpMaxErrorException(getUrl);
+		}
+		CloseableHttpClient client=getClientByPool();
+		
+		getUrl+=URLEncodedUtils.format(Arrays.asList(parms), "utf-8");
+		
+		HttpGet request=new HttpGet(getUrl);
+		request.addHeader(header);
+		HttpEntity retVal=null;
+		try {
+			CloseableHttpResponse response=client.execute(request);
+			if(response.getStatusLine().getStatusCode()!=200){
+				logger.error(getUrl+"请求异常：statusCode="+response.getStatusLine().getStatusCode());
+				request.abort();
+				return get(getUrl,header);
+			}
+			retVal = response.getEntity();
+		} catch (HttpMaxErrorException e) {
+			throw e;//防止死循环
+		} catch (Exception e) {
+			logger.error(getUrl+"请求异常",e);
+			request.abort();
+			return get(getUrl,header);
+		}  
+		
+		logger.debug("response:"+retVal);
+		if(HttpUtil.URL_POST_ERR_COUNT.containsKey(getUrl)){
+			HttpUtil.URL_POST_ERR_COUNT.remove(getUrl);
+		}
+		return retVal;
+	}
+	
 	/**
 	 * 从连接池中获取Client
 	 * @return
@@ -205,6 +278,8 @@ public class HttpPoolUtil {
     			  .setConnectTimeout(AppUtil.getConnTimeOut())
     			  .setConnectionRequestTimeout(5000)
     			  .build();
+    	
+         
         return HttpClients.custom().setDefaultRequestConfig(defaultRequestConfig)
                 .setConnectionManager(cm)
                 .setUserAgent(AppUtil.getPropertity("http.useragent"))
@@ -225,28 +300,33 @@ public class HttpPoolUtil {
 			e1.printStackTrace();
 		}
 		
+		String xd="https://sp0.baidu.com/yLsHczq6KgQFm2e88IuM_a/s?sample_name=bear_brain";
+		String re=postRetStr(xd,new BasicHeader("Cookie", "BDUSS=VZySDVuWjltUzdyZlM4Z0FnRERVQ0lUejRyblFuWFZvbERzTUgxckMzZWRDWmRXQVFBQUFBJCQAAAAAAAAAAAEAAAB1ZkQIMzgyN"+
+"TY2Njk3AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJ18b1adfG9WL"), new BasicNameValuePair("request_query", "你是谁"));
+		System.out.println(re);
+		
 		System.out.println(123456);
-		CloseableHttpClient client=getClientByPool();
+//		CloseableHttpClient client=getClientByPool();
 		
-		HttpGet request=new HttpGet("http://blog.freshz.cn");
+//		HttpGet request=new HttpGet("http://blog.freshz.cn");
 //		request.addHeader("Content-Type","application/x-www-form-urlencoded; charset=UTF-8");
-		HttpEntity entity=null;
-		try {
-			entity = client.execute(request).getEntity();
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-			request.abort();
-		} catch (IOException e) {
-			e.printStackTrace();
-			request.abort();
-		}
-		
-		try {
-			System.out.println(EntityUtils.toString(entity));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		HttpEntity entity=null;
+//		try {
+//			entity = client.execute(request).getEntity();
+//		} catch (ClientProtocolException e) {
+//			e.printStackTrace();
+//			request.abort();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			request.abort();
+//		}
+//		
+//		try {
+//			System.out.println(EntityUtils.toString(entity));
+//		} catch (ParseException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 	}
 }

@@ -1,5 +1,8 @@
 package com.zaq.smartHome.controll.command;
 
+import java.util.TimerTask;
+
+import com.zaq.smartHome.controll.CmdDelayTaskCollection;
 import com.zaq.smartHome.db.Cmd;
 
 public abstract class BaseCmd {
@@ -34,5 +37,40 @@ public abstract class BaseCmd {
 	public void setDelay(Integer delay) {
 		this.delay = delay;
 	}
+	
+	public void beforExec(){}
+	/**
+	 * 指令具体操作
+	 */
 	public abstract void exec();
+	/**
+	 * 延时指令具体操作
+	 */
+	public abstract void execDelay();
+	/**
+	 * 指令执行模版
+	 */
+	public final void run(){
+		beforExec();
+		exec();
+		Cmd delayCmd= cmd.getAutoDelayExecCmd();
+		if(null!=delayCmd){
+			/**
+			 * 创建延时任务
+			 */
+			TimerTask task=new TimerTask() {
+				@Override
+				public void run() {
+					execDelay();
+				}
+			};
+			//添加延时任务到容器
+			CmdDelayTaskCollection.addDelayTask(delayCmd.getCode(), delayCmd.getType(), task, getDelay());
+		}
+		afterExec();
+	}
+	
+	public void afterExec(){
+		
+	}
 }
