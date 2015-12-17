@@ -96,7 +96,7 @@ public class AudioUtil {
 			public void run() {
 				try {
 					text.append(STTutil.done(Record.captureRetByte(), "wav")); 
-					System.out.println("x:"+text.toString());
+					logger.error("x:"+text.toString());
 					;
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -109,7 +109,7 @@ public class AudioUtil {
 		Thread.sleep(5000l);
 		
 		final String audioFilePath=AD_INIT+File.separator+"meSay2bd.wav";
-		System.out.println("xx:"+text.toString());
+		logger.error("xx:"+text.toString());
 		try {
 			TTSutil.done(text.toString(),audioFilePath,new Runnable() {
 				@Override
