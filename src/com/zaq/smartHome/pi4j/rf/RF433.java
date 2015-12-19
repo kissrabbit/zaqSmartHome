@@ -17,18 +17,18 @@ import com.zaq.smartHome.util.ThreadPool;
 public class RF433 {
 	private static Logger logger=Logger.getLogger(RF433.class);
 	public static void main(String[] args) throws Exception {
-	
+	System.out.println((long) (350 * 120 * 0.01));
 //		ThreadPool.execute(new Runnable() {
 //			
 //			@Override
 //			public void run() {
 				 final GpioController gpio = GpioFactory.getInstance();
-				 	final AtomicLong time = new AtomicLong(0);;
 			        // provision gpio pin #02 as an input pin with its internal pull down resistor enabled
 			        final GpioPinDigitalInput myButton = gpio.provisionDigitalInputPin(RaspiPin.GPIO_28, PinPullResistance.PULL_DOWN);
 			        myButton.setShutdownOptions(true);
 			        // create and register gpio pin listener
 			        myButton.addListener(new GpioPinListenerDigital() {
+			        	private long time=0;
 			            @Override
 			            public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
 			                // display pin state on console
@@ -36,10 +36,10 @@ public class RF433 {
 			                
 			                long now= System.nanoTime();
 			                logger.info("now:"+now);
-			                if(0!=time.get()){
-			                	logger.info("上次间隔"+(now-time.get())/1000+"微秒");
+			                if(0!=time){
+			                	logger.info("上次间隔"+(now-time)/1000+"微秒");
 			                }
-			                time.set(now);;
+			                time=now;;
 			            }
 			            
 			        });
