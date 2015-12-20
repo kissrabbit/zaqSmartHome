@@ -17,6 +17,7 @@ import com.zaq.smartHome.pi4j.been.Been;
 import com.zaq.smartHome.pi4j.diode.Diode;
 import com.zaq.smartHome.sound.AudioUtil;
 import com.zaq.smartHome.sound.Record;
+import com.zaq.smartHome.util.ThreadPool;
 
 /**
  * 超声波HC-SR04 模块控制 5V
@@ -36,6 +37,7 @@ public class Csb extends BaseGpio{
 	private static final String inGpioName="gpio.csb.rec";//配置文件对映的名称  echo（接收端）
 	private static Executor executor;//测距的线程
 	private static Executor executorRecord;//录音的线程
+	private static Executor executorRun;//运行的线程
 	private static boolean runFlag=false;//是否开启测距
 	private static boolean recordFail=false;//录音失败
 	private static int STAT=0;//工作状态 0;1米外  1:1米内 2：0.5米内
@@ -47,6 +49,7 @@ public class Csb extends BaseGpio{
 				csb=new Csb(inGpioName,outGpioName);
 				executor=Executors.newSingleThreadExecutor();
 				executorRecord=Executors.newSingleThreadExecutor();
+				executorRun=Executors.newSingleThreadExecutor();
 				hasInit=true;
 			} catch (Exception e) {
 				logger.error("初始化超声波失败", e);
@@ -60,53 +63,65 @@ public class Csb extends BaseGpio{
 	 */
 	public void run(){
 		if(hasInit){
-			runFlag=true;
-			while(runFlag) {
-	        	
-	        	float  distance=checkdist();
-	        	System.out.println("超声波检测距离："+distance+"m");
-	        	if(distance==0){
-	        		Been.init().runSlowDuration(1000);
-	        	}else if(distance<0.49){
-	        		if(STAT!=2){
-	        			//打开录音机
-	        			executorRecord.execute(new Runnable() {
-							
-							@Override
-							public void run() {
-								try {
-									Record.captureRetFile();
-									recordFail=false;
-								} catch (LineUnavailableException | ResRuningException | SystemException e) {
-									logger.error("录音失败", e);
-									recordFail=true;
-									AudioUtil.playRecordFail();
-								}
-							}
-						});
-	        		}
-	        		STAT=2;
-	        	}else if(distance<0.99){
-	        		if(STAT!=1){
-	        			//关闭录音机
-	        			finishRecord();
-	        			//发光二极管闪  提示2秒 靠近一点
-	        			Diode.init().runSlowDuration(1000);
-	        		}
-	        		STAT=1;
-	        	}else {
-	        		if(STAT!=0){
-	        			//关闭录音机
-	        			finishRecord();
-	        		}
-	        		STAT=0;
+			executorRun.execute(new Runnable() {
+				
+				@Override
+				public void run() {
+
+					runFlag=true;
+					while(runFlag) {
+			        	
+			        	float  distance=checkdist();
+			        	System.out.println("超声波检测距离："+distance+"m");
+			        	if(distance==0){
+			        		Been.init().runSlowDuration(1000);
+			        	}else if(distance<0.49){
+			        		if(STAT!=2){
+			        			//打开录音机
+			        			executorRecord.execute(new Runnable() {
+									
+									@Override
+									public void run() {
+										try {
+											Record.captureRetFile();
+											recordFail=false;
+										} catch (LineUnavailableException | ResRuningException | SystemException e) {
+											logger.error("录音失败", e);
+											recordFail=true;
+											AudioUtil.playRecordFail();
+										}
+									}
+								});
+			        		}
+			        		STAT=2;
+			        	}else if(distance<0.99){
+			        		if(STAT!=1){
+			        			//关闭录音机
+			        			finishRecord();
+			        			//发光二极管闪  提示2秒 靠近一点
+			        			Diode.init().runSlowDuration(1000);
+			        		}
+			        		STAT=1;
+			        	}else {
+			        		if(STAT!=0){
+			        			//关闭录音机
+			        			finishRecord();
+			        		}
+			        		STAT=0;
+						}
+			        	
+			            try {
+							Thread.sleep(800);
+						} catch (InterruptedException e) {}
+			        }
+				
 				}
-	        	
-	            try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {}
-	        }
+			});
 		}
+	}
+	
+	public boolean isRun(){
+		return runFlag;
 	}
 	
 	public void stop(){

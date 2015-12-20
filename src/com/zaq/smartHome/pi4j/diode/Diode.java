@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 
 import com.pi4j.wiringpi.Gpio;
 import com.zaq.smartHome.pi4j.BaseGpio;
+import com.zaq.smartHome.util.ThreadPool;
 
 /**
  * 发光二极管 3.3V
@@ -55,21 +56,35 @@ public class Diode extends BaseGpio{
 	 * 快速闪  持续durationMS秒
 	 * @param durationMS
 	 */
-	public void runFastDuration(long durationMS){
-		run(250);
-		Gpio.delay(durationMS);
-		stop();
+	public void runFastDuration(final long durationMS){
+		ThreadPool.execute(new Runnable() {
+			
+			@Override
+			public void run() {
+				Diode.this.run(250);
+				Gpio.delay(durationMS);
+				Diode.this.stop();				
+			}
+		});
 	}
 	/**
 	 * 慢速闪  持续durationMS秒
 	 * @param durationMS
 	 */
-	public void runSlowDuration(long durationMS){
-		run(250);
-		Gpio.delay(durationMS);
-		stop();
+	public void runSlowDuration(final long durationMS){
+
+		ThreadPool.execute(new Runnable() {
+			
+			@Override
+			public void run() {
+				Diode.this.run(500);
+				Gpio.delay(durationMS);
+				Diode.this.stop();				
+			}
+		});
+	
 	}
-	public void stop(){
+	public synchronized void stop(){
 		if(diodefuture!=null){
 			diodefuture.cancel(true);
 		}

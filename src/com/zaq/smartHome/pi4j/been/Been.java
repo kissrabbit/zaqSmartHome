@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 
 import com.pi4j.wiringpi.Gpio;
 import com.zaq.smartHome.pi4j.BaseGpio;
+import com.zaq.smartHome.util.ThreadPool;
 
 /**
  * 轰鸣器 3.3V
@@ -59,22 +60,38 @@ public class Been extends BaseGpio{
 	 * 快速鸣  持续durationMS秒
 	 * @param durationMS
 	 */
-	public void runFastDuration(long durationMS){
-		run(250);
-		Gpio.delay(durationMS);
-		stop();
+	public void runFastDuration(final long durationMS){
+
+		ThreadPool.execute(new Runnable() {
+			
+			@Override
+			public void run() {
+				Been.this.run(250);
+				Gpio.delay(durationMS);
+				Been.this.stop();				
+			}
+		});
+	
 	}
 	/**
 	 * 慢速鸣  持续durationMS秒
 	 * @param durationMS
 	 */
-	public void runSlowDuration(long durationMS){
-		run(250);
-		Gpio.delay(durationMS);
-		stop();
+	public void runSlowDuration(final long durationMS){
+
+		ThreadPool.execute(new Runnable() {
+			
+			@Override
+			public void run() {
+				Been.this.run(500);
+				Gpio.delay(durationMS);
+				Been.this.stop();				
+			}
+		});
+	
 	}
 	
-	public void stop(){
+	public synchronized void stop(){
 		if(beenfuture!=null){
 			beenfuture.cancel(true);
 		}

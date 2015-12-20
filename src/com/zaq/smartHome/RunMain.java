@@ -34,9 +34,9 @@ public class RunMain extends SpringBootServletInitializer implements EmbeddedSer
 		
 		//初始化硬件设备
 		BodyInfrared.init().listener();
-		Csb.init().run();
-		Been.init();
-		Diode.init();
+//		Csb.init().run();
+//		Been.init();
+//		Diode.init();
 		
 //		SpringApplication.run(RunMain.class);  
 		while(true){
