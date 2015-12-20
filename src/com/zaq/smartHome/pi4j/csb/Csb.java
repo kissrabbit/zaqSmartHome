@@ -1,89 +1,150 @@
 package com.zaq.smartHome.pi4j.csb;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
-import com.pi4j.io.gpio.GpioController;
-import com.pi4j.io.gpio.GpioFactory;
-import com.pi4j.io.gpio.GpioPinDigitalInput;
-import com.pi4j.io.gpio.GpioPinDigitalOutput;
-import com.pi4j.io.gpio.PinPullResistance;
-import com.pi4j.io.gpio.RaspiPin;
+import javax.sound.sampled.LineUnavailableException;
+
+import org.apache.log4j.Logger;
+
+import com.zaq.smartHome.baidu.STTutil;
+import com.zaq.smartHome.exception.ResRuningException;
+import com.zaq.smartHome.exception.SystemException;
+import com.zaq.smartHome.pi4j.BaseGpio;
+import com.zaq.smartHome.pi4j.been.Been;
+import com.zaq.smartHome.pi4j.diode.Diode;
+import com.zaq.smartHome.sound.AudioUtil;
+import com.zaq.smartHome.sound.Player;
+import com.zaq.smartHome.sound.Record;
+import com.zaq.smartHome.util.ThreadPool;
 
 /**
- * 超声波HC-SR04 模块控制 二级管及轰鸣器
+ * 超声波
  * @author zaqzaq
- * 2015年12月5日
+ * 2015年12月20日
  *
  */
-public class Csb {
-	static GpioPinDigitalOutput twoG;// 2极管口
-	static  GpioPinDigitalOutput been;// 轰鸣器口
-	static GpioPinDigitalOutput so;// 超声音波 发出口
-	static GpioPinDigitalInput si;// 超声音波 接收口
-	static int STAT=0;//轰鸣器叫 2极管闪烁 工作状态 0;停止 1:慢 2：快
-	
-	static Future twoGf;//2极管工作任務
-	static Future beenf;//轰鸣器工作任務
-	
-	static Executor executor;
-	
-	//轰鸣器叫 2极管闪烁 距离越近闪烁越快
-	private static void beepAndLightFast(){
-		if(twoGf!=null){
-			twoGf.cancel(true);
-		}
-		if(beenf!=null){
-			beenf.cancel(true);
-		}
-		twoGf=twoG.blink(250);
-		beenf=been.blink(250);
-		System.out.println("fast");
+public class Csb extends BaseGpio{
+	protected Csb(String inputGpioName, String outputGpioName) throws Exception {
+		super(inputGpioName, outputGpioName);
 	}
-	//轰鸣器叫 2极管闪烁 距离越近闪烁越慢
-	private static void beepAndLightSlow(){
-		if(twoGf!=null){
-			twoGf.cancel(true);
+	
+	protected static Logger logger=Logger.getLogger(Csb.class);
+	private static Csb csb; //Singleton 
+	private static boolean hasInit=false;//初始化是否成功
+	private static final String outGpioName="gpio.csb.send";//配置文件对映的名称
+	private static final String inGpioName="gpio.csb.rec";//配置文件对映的名称
+	private static Executor executor;//测距的线程
+	private static Executor executorRecord;//录音的线程
+	private static boolean runFlag=false;//是否开启测距
+	private static boolean recordFail=false;//录音失败
+	private static int STAT=0;//工作状态 0;1米外  1:1米内 2：0.5米内
+	
+	//Singleton
+	public static Csb instace(){
+		if(null==csb){
+			try {
+				csb=new Csb(inGpioName,outGpioName);
+				executor=Executors.newSingleThreadExecutor();
+				executorRecord=Executors.newSingleThreadExecutor();
+				hasInit=true;
+			} catch (Exception e) {
+				logger.error("初始化超声波失败", e);
+				hasInit=false;
+			}
 		}
-		if(beenf!=null){
-			beenf.cancel(true);
-		}
-		twoGf=twoG.blink(500);
-		beenf=been.blink(500);
-		System.out.println("slow");
+		return csb;
 	}
-	//轰鸣器叫 2极管闪烁 停止工作
-	private static void stop(){
-		if(twoGf!=null){
-			twoGf.cancel(true);
+	/**
+	 * 开启超声波测距
+	 */
+	public void run(){
+		if(hasInit){
+			runFlag=true;
+			while(runFlag) {
+	        	
+	        	float  distance=checkdist();
+	        	
+	        	if(distance<0.49){
+	        		if(STAT!=2){
+	        			//打开录音机
+	        			executorRecord.execute(new Runnable() {
+							
+							@Override
+							public void run() {
+								try {
+									Record.captureRetFile();
+									recordFail=false;
+								} catch (LineUnavailableException | ResRuningException | SystemException e) {
+									logger.error("录音失败", e);
+									recordFail=true;
+									AudioUtil.playRecordFail();
+								}
+							}
+						});
+	        		}
+	        		STAT=2;
+	        	}else if(distance<0.99){
+	        		if(STAT!=1){
+	        			//关闭录音机
+	        			finishRecord();
+	        			//发光二极管闪  提示2秒 靠近一点
+	        			Diode.instace().runSlowDuration(2000);
+	        		}
+	        		STAT=1;
+	        	}else {
+	        		if(STAT!=0){
+	        			//关闭录音机
+	        			finishRecord();
+	        		}
+	        		STAT=0;
+				}
+	        	
+	            try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {}
+	        }
 		}
-		if(beenf!=null){
-			beenf.cancel(true);
+	}
+	
+	public void stop(){
+		runFlag=false;
+	}
+	
+	/**
+	 * 完成录音
+	 */
+	private void finishRecord(){
+		Record.stop();
+		if(!recordFail){
+			AudioUtil.done();
 		}
-		twoG.high();
-		been.high();
-		System.out.println("stop");
 	}
 	/**
 	 * 檢測距離
 	 * @return
 	 * @throws InterruptedException
 	 */
-	private static float  checkdist() throws InterruptedException{
+	private  float  checkdist() {
 //		System.out.println("send s start...");
         //发出触发信号
-        so.high();
+        output.high();
         //保持10us以上（这里选择15us）
-        Thread.sleep(0, 15000);
-        so.low();
+        try {
+			Thread.sleep(0, 15000);
+		} catch (InterruptedException e) {
+			logger.error("发送超声波失败",e);
+			return Float.MAX_VALUE;
+		}
+        output.low();
         //妈的太近了，没有这句话，你就等着下面的死循环吧-_-!
         FutureTask<Void> future=new FutureTask<Void>(new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				 while (si.isLow()){
+				 while (input.isLow()){
 			        	//不用处理，，，设备正在发送超声波中。。。。
 //			        	System.out.println("Do not handle, and the device is transmitting ultrasonic waves....");
 			        }
@@ -94,13 +155,13 @@ public class Csb {
         try {
 			future.get(200, TimeUnit.MILLISECONDS);
 		} catch (Exception e) {
-			System.out.println("Do not handle,too close....");
+			logger.error("Do not handle,too close....",e);
         	return 0;
 		}
         //发送完毕 发现高电平时开时计时
 //        System.out.println("Sent to the end of the discovery of high power usually open time");
         long t1 = System.nanoTime();
-        while (si.isHigh()){
+        while (input.isHigh()){
         	//不用处理，，，设备正在接收超声波。。。。
 //        	System.out.println("Do not handle, and the device is receiving ultrasound....");
         }
@@ -110,71 +171,4 @@ public class Csb {
         //返回距离，单位为米
         return ((float)(t2-t1)/1000000000)*340/2;
 	}
-    public static void main(String[] args) throws InterruptedException {
-    	executor=Executors.newSingleThreadExecutor();
-    	
-        final GpioController gpio = GpioFactory.getInstance();
-        // 2极管口
-        twoG = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_02);
-        // 轰鸣器口
-        been = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_03);
-
-        // 超声音波 发出口
-        so = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_24);
-        //  接收口
-        si = gpio.provisionDigitalInputPin(RaspiPin.GPIO_25, PinPullResistance.PULL_DOWN);
-        //自动释放gpio口 or user aborts (CTRL-C)
-        twoG.setShutdownOptions(true);
-        been.setShutdownOptions(true);
-        so.setShutdownOptions(true);
-        si.setShutdownOptions(true);
-       /* //红外 待接入
-        final GpioPinDigitalInput red = gpio.provisionDigitalInputPin(RaspiPin.GPIO_18, PinPullResistance.PULL_DOWN);
-
-        red.addListener(new GpioPinListenerDigital() {
-                @Override
-                public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
-                    // when button is pressed, speed up the blink rate on LED #2
-                    if(event.getState().isHigh()){
-                    	been.blink(200);
-                    	been.blink(200);
-                    }                        
-                    else{
-                    	twoG.blink(1000);
-                    	been.blink(1000);
-                    }
-                }
-            });
-*/
-        
-        while(true) {
-        	
-        	float  distance=checkdist();
-        	
-        	if(distance<0.49){
-        		if(STAT!=2){
-        			beepAndLightFast();
-        		}
-        		STAT=2;
-        	}else if(distance<0.99){
-        		if(STAT!=1){
-        			beepAndLightSlow();
-        		}
-        		STAT=1;
-        	}else {
-        		if(STAT!=0){
-        			stop();
-        		}
-        		STAT=0;
-			}
-        	
-        	System.out.println("distance  "+distance+"  m");
-        	
-            Thread.sleep(1000);
-        }
-        
-        // stop all GPIO activity/threads
-        // (this method will forcefully shutdown all GPIO monitoring threads and scheduled tasks)
-        // gpio.shutdown();   <--- implement this method call if you wish to terminate the Pi4J GPIO controller
-    }
 }

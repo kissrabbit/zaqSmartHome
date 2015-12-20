@@ -11,7 +11,9 @@ import org.apache.log4j.Logger;
 import com.zaq.smartHome.baidu.STTutil;
 import com.zaq.smartHome.baidu.TTSutil;
 import com.zaq.smartHome.exception.SystemException;
+import com.zaq.smartHome.qa.robot.QAxiaoDu;
 import com.zaq.smartHome.util.AppUtil;
+import com.zaq.smartHome.util.PinyingUtil;
 import com.zaq.smartHome.util.ThreadPool;
 /**
  * 音频工具类
@@ -25,8 +27,10 @@ public class AudioUtil {
 	 * 录音的临时文件路径
 	 */
 	public static final String TMP_RECORD="sound" + File.separator + "tmpSound.wav";
+	
+	public static final File TMP_RECORD_FILE=new File(TMP_RECORD);
 	/**
-	 * 自己录音的音频文件
+	 * 自己录音的初始化音频文件
 	 */
 	public static final String AD_INIT="sound" + File.separator + "init";
 	/**
@@ -44,7 +48,27 @@ public class AudioUtil {
 			logger.error("播个百度语音合成超时都不行么！XXX", e);
 		}
 	}
+	/**
+	 * 播放录音失败的语音提示
+	 */
+	public static void playRecordFail(){
+		try {
+			Player.play(new File(AD_INIT+File.separator+"record_fail.wav"));
+		} catch (Exception e) {
+			logger.error("播个录音失败都不行么！XXX", e);
+		}
+	}
 	
+	/**
+	 * 播放语音识别异常语音提示
+	 */
+	public static void playRecognitionFail(){
+		try {
+			Player.play(new File(AD_INIT+File.separator+"recognition_fail.wav"));
+		} catch (Exception e) {
+			logger.error("播个语音识别异常都不行么！XXX", e);
+		}
+	}
 	// 定义音频格式
 	private static AudioFormat af = null;
 
@@ -86,6 +110,43 @@ public class AudioUtil {
 		return new AudioFormat(sampleRate, sampleSizeInBits, channels, signed, bigEndian);
 	}
 
+	
+	/**
+	 * 识别默认语音文件 并 处理指令 或QA
+	 * @return
+	 * @throws Exception
+	 */
+	public static void done(){
+		ThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				//进行语音识别
+				try {
+					String text= STTutil.done(AudioUtil.TMP_RECORD_FILE);
+					String ask=QAxiaoDu.instance().ask(text); 
+					
+					if(null==ask){
+						return;
+					}
+					//TODO 先从数据库缓存中找相同ask的信息
+					String toFilePath=AudioUtil.AD_CONVER+File.separator+PinyingUtil.getPinYinHeadChar(ask)+System.currentTimeMillis()+".wav";
+					
+					try {
+						TTSutil.done(ask,toFilePath);
+						//TODO 添加语音到指令库
+					} catch (Exception e) {
+						logger.error("文字【"+ask+"】转语音失败",e);
+						playBDtimeout();
+					}
+				} catch (Exception e) {
+					logger.error("语音识别异常", e);
+					playRecognitionFail();
+				}
+				
+				
+			}
+		});
+	}
 	
 	public static void main(String[] args) throws Exception {
 		AppUtil.init();

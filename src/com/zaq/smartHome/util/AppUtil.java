@@ -16,6 +16,7 @@ public class AppUtil {
 	private static String log4j="log4j.properties";
 	private static String config="config.properties";
 	private static String configJdbc="jdbc.properties";
+	private static String configPi4j="pi4j.properties";
 	private static Properties props ;
 	
 	public static void init() throws IOException {
@@ -27,6 +28,9 @@ public class AppUtil {
 		props.load(isConfig);
 		InputStream isConfigJdbc = new BufferedInputStream(AppUtil.class.getClassLoader().getResourceAsStream(configJdbc));
 		props.load(isConfigJdbc);
+		InputStream isConfigPi4j = new BufferedInputStream(AppUtil.class.getClassLoader().getResourceAsStream(configPi4j));
+		props.load(isConfigPi4j);
+		
 		HttpPoolUtil.init();
 	}
 

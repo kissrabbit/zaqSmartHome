@@ -13,11 +13,16 @@ import javax.xml.bind.DatatypeConverter;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.message.BasicHeader;
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
+import com.zaq.smartHome.qa.robot.QAxiaoDu;
+import com.zaq.smartHome.sound.AudioUtil;
 import com.zaq.smartHome.util.AppUtil;
 import com.zaq.smartHome.util.BDUtil;
 import com.zaq.smartHome.util.HttpPoolUtil;
+import com.zaq.smartHome.util.PinyingUtil;
+import com.zaq.smartHome.util.ThreadPool;
 
 /**
  * 语音转文字
@@ -26,7 +31,7 @@ import com.zaq.smartHome.util.HttpPoolUtil;
  * 
  */
 public class STTutil {
-
+	private static Logger logger=Logger.getLogger(STTutil.class);
 	private static final String API_URI = "http://vop.baidu.com/server_api";
 
 	/**
@@ -50,6 +55,7 @@ public class STTutil {
 		
 		return done(FileUtils.readFileToByteArray(soundFile),"wav");
 	}
+	
 	/**
 	 * 默认音频为WAV格式
 	 * @param soundFile

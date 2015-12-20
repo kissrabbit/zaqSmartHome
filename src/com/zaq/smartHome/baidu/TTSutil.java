@@ -7,10 +7,18 @@ import it.sauronsoftware.jave.EncodingAttributes;
 import it.sauronsoftware.jave.InputFormatException;
 
 import java.io.File;
+import java.io.IOException;
+
+import javax.sound.sampled.LineUnavailableException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.log4j.Logger;
 
+import com.zaq.smartHome.exception.SystemException;
+import com.zaq.smartHome.pi4j.been.Been;
+import com.zaq.smartHome.pi4j.diode.Diode;
+import com.zaq.smartHome.sound.Player;
 import com.zaq.smartHome.util.AppUtil;
 import com.zaq.smartHome.util.BDUtil;
 import com.zaq.smartHome.util.HttpPoolUtil;
@@ -22,6 +30,7 @@ import com.zaq.smartHome.util.ThreadPool;
  *
  */
 public class TTSutil {
+	private static Logger logger=Logger.getLogger(TTSutil.class);
 	static final String API_URI="http://tsn.baidu.com/text2audio";
 	
 	//使用jave音频转码
@@ -80,6 +89,22 @@ public class TTSutil {
     public static File done(String tex ,String toFilePath ,Runnable... execs) throws Exception {
     	return done(tex, toFilePath, true, execs);
     }
+    
+    public static void done(String tex ,final String toFilePath ) throws Exception {
+    	   done(tex,toFilePath,new Runnable() {
+    			@Override
+    			public void run() {
+    				try {
+    					Player.play(new File(toFilePath));
+    				} catch (LineUnavailableException | SystemException | IOException e) {
+    					logger.error("播放文件："+toFilePath+"失败", e);
+    					//轰鸣器 提示两秒
+    					Been.instace().runFastDuration(2000);
+    				}
+    			}
+    		});
+    }
+ 
     
     /**
      * 转成java 支持的wav格式 
