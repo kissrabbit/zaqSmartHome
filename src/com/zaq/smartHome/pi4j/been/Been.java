@@ -8,7 +8,7 @@ import com.pi4j.wiringpi.Gpio;
 import com.zaq.smartHome.pi4j.BaseGpio;
 
 /**
- * 轰鸣器
+ * 轰鸣器 3.3V
  * @author zaqzaq
  * 2015年12月20日
  *
@@ -24,7 +24,7 @@ public class Been extends BaseGpio{
 	private static final String gpioName="gpio.been";//配置文件对映的名称
 	private static Future<?> beenfuture;//轰鸣器工作任務
 	//Singleton
-	public static Been instace(){
+	public static Been init(){
 		if(null==been){
 			try {
 				been=new Been("",gpioName);

@@ -26,9 +26,7 @@ public class AudioUtil {
 	/**
 	 * 录音的临时文件路径
 	 */
-	public static final String TMP_RECORD="sound" + File.separator + "tmpSound.wav";
-	
-	public static final File TMP_RECORD_FILE=new File(TMP_RECORD);
+	public static final String AD_TMP="sound" + File.separator + "tmp";
 	/**
 	 * 自己录音的初始化音频文件
 	 */
@@ -39,13 +37,13 @@ public class AudioUtil {
 	public static final String AD_CONVER="sound" + File.separator + "conver";
 	
 	/**
-	 * 播个百度语音合成超时
+	 * 播个语音合成失败 提示音
 	 */
-	public static void playBDtimeout(){
+	public static void playTTSFail(){
 		try {
-			Player.play(new File(AD_INIT+File.separator+"bd_timeout.wav"));
+			Player.play(new File(AD_INIT+File.separator+"tts_fail.wav"));
 		} catch (Exception e) {
-			logger.error("播个百度语音合成超时都不行么！XXX", e);
+			logger.error("播个语音合成失败都不行么！XXX", e);
 		}
 	}
 	/**
@@ -67,6 +65,16 @@ public class AudioUtil {
 			Player.play(new File(AD_INIT+File.separator+"recognition_fail.wav"));
 		} catch (Exception e) {
 			logger.error("播个语音识别异常都不行么！XXX", e);
+		}
+	}
+	/**
+	 * 回答不上来的 语音提示
+	 */
+	public static void playASKFail(){
+		try {
+			Player.play(new File(AD_INIT+File.separator+"ask_fail.wav"));
+		} catch (Exception e) {
+			logger.error("回答不上来都不行么！XXX", e);
 		}
 	}
 	// 定义音频格式
@@ -110,38 +118,57 @@ public class AudioUtil {
 		return new AudioFormat(sampleRate, sampleSizeInBits, channels, signed, bigEndian);
 	}
 
-	
+	public static void done(){
+		done(Record.take());
+	}
 	/**
 	 * 识别默认语音文件 并 处理指令 或QA
 	 * @return
 	 * @throws Exception
 	 */
-	public static void done(){
+	public static void done(final File recordFile){
 		ThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
 				//进行语音识别
+				String text=null;
 				try {
-					String text= STTutil.done(AudioUtil.TMP_RECORD_FILE);
-					String ask=QAxiaoDu.instance().ask(text); 
-					
-					if(null==ask){
-						return;
-					}
-					//TODO 先从数据库缓存中找相同ask的信息
-					String toFilePath=AudioUtil.AD_CONVER+File.separator+PinyingUtil.getPinYinHeadChar(ask)+System.currentTimeMillis()+".wav";
-					
-					try {
-						TTSutil.done(ask,toFilePath);
-						//TODO 添加语音到指令库
-					} catch (Exception e) {
-						logger.error("文字【"+ask+"】转语音失败",e);
-						playBDtimeout();
-					}
+					text= STTutil.done(recordFile);
+					logger.info("识别出语音："+text);
 				} catch (Exception e) {
 					logger.error("语音识别异常", e);
 					playRecognitionFail();
+					return;
+				}finally{
+					if(recordFile.exists()){
+						recordFile.delete();
+					}
 				}
+					
+				String ask=null;
+				try {
+					ask = QAxiaoDu.instance().ask(text);
+					logger.info("获取回答："+ask);
+				} catch (Exception e) {
+					logger.error("获取回答异常", e);
+					playASKFail();
+					return;
+				} 
+				
+				if(null==ask){
+					return;
+				}
+				//TODO 先从数据库缓存中找相同ask的信息
+				String toFilePath=AudioUtil.AD_CONVER+File.separator+PinyingUtil.getPinYinHeadCharWithAz(ask)+System.currentTimeMillis()+".wav";
+				
+				try {
+					TTSutil.done(ask,toFilePath);
+					//TODO 添加语音到指令库
+				} catch (Exception e) {
+					logger.error("文字【"+ask+"】转语音失败",e);
+					playTTSFail();
+				}
+				
 				
 				
 			}
@@ -156,7 +183,7 @@ public class AudioUtil {
 			@Override
 			public void run() {
 				try {
-					text.append(STTutil.done(Record.captureRetByte(), "wav")); 
+					text.append(STTutil.done(Record.captureRetByte("tmpSound.wav"), "wav")); 
 					logger.error("x:"+text.toString());
 					;
 				} catch (Exception e) {
@@ -184,7 +211,7 @@ public class AudioUtil {
 			});
 		} catch (Exception e) {
 			e.printStackTrace();
-			playBDtimeout();
+			playTTSFail();
 		}
 		
 		

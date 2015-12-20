@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
 
 import com.zaq.smartHome.qa.BaseQA;
 import com.zaq.smartHome.util.AppUtil;
@@ -23,8 +24,12 @@ public class QAxiaoDu extends BaseQA {
 	
 	@Override
 	public String askRemote(String question) {
-		return HttpPoolUtil.getRetStr(AppUtil.getXDUri(),new BasicHeader("Cookie", AppUtil.getXDCookie()), 
+		String httpRes=HttpPoolUtil.getRetStr(AppUtil.getXDUri(),new BasicHeader("Cookie", AppUtil.getXDCookie()), 
 				new BasicNameValuePair("request_query", question));
+			logger.debug("问题："+question+"\r\n返回："+httpRes);
+		//		return new JSONObject(httpRes).getJSONArray("result_list").getJSONObject(0).getJSONObject("result_content").getString("answer");
+		String ask=new JSONObject(new JSONObject(httpRes).getJSONArray("result_list").getJSONObject(0).get("result_content").toString()).getString("answer");
+		return ask.replaceAll("小度", "那B小心");
 	}
 	
 	public static void main(String[] args) {
@@ -35,8 +40,14 @@ public class QAxiaoDu extends BaseQA {
 		}
 		
 		String re=HttpPoolUtil.getRetStr(AppUtil.getXDUri(),new BasicHeader("Cookie", AppUtil.getXDCookie()), 
-					new BasicNameValuePair("request_query", "苏州后天的天气"));
+					new BasicNameValuePair("request_query", "你是谁，")
+//					new BasicNameValuePair("request_query", "苏州后天的天气")
+		);
 		System.out.println(re);
+		System.out.println(new JSONObject(re).getJSONArray("result_list").getJSONObject(0).get("result_content"));
+		System.out.println(new JSONObject(new JSONObject(re).getJSONArray("result_list").getJSONObject(0).get("result_content").toString()).getString("answer"));
+		
+//		System.out.println(new JSONObject(re).getJSONArray("result_list").getJSONObject(0).getJSONObject("result_content").getString("answer"));
 		
 	}
 }

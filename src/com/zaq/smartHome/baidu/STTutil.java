@@ -12,17 +12,14 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.message.BasicHeader;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
-import com.zaq.smartHome.qa.robot.QAxiaoDu;
-import com.zaq.smartHome.sound.AudioUtil;
 import com.zaq.smartHome.util.AppUtil;
 import com.zaq.smartHome.util.BDUtil;
 import com.zaq.smartHome.util.HttpPoolUtil;
-import com.zaq.smartHome.util.PinyingUtil;
-import com.zaq.smartHome.util.ThreadPool;
 
 /**
  * 语音转文字
@@ -71,7 +68,22 @@ public class STTutil {
 		ByteArrayEntity byteArrayEntity=new ByteArrayEntity(soundByte);
 		String httpRes=HttpPoolUtil.postRetStr(API_URI + "?cuid=" + AppUtil.getPropertity("cuid") + "&token=" + BDUtil.getToken(), 
 												new BasicHeader("Content-Type", "audio/"+fileFormat+"; rate=8000"),byteArrayEntity);
+		logger.debug("请求语识别返回："+httpRes);
+		return (String) new JSONObject(httpRes).getJSONArray("result").get(0);
+
+	}
+	
+	public static String done(InputStream inputStream) throws Exception {
 		
+		return done(inputStream,"wav");
+	}
+	
+	public static String done(InputStream inputStream,String fileFormat) throws Exception {
+		
+		InputStreamEntity inputStreamEntity=new InputStreamEntity(inputStream);
+		String httpRes=HttpPoolUtil.postRetStr(API_URI + "?cuid=" + AppUtil.getPropertity("cuid") + "&token=" + BDUtil.getToken(), 
+												new BasicHeader("Content-Type", "audio/"+fileFormat+"; rate=8000"),inputStreamEntity);
+		logger.debug("请求语识别返回："+httpRes);
 		return (String) new JSONObject(httpRes).getJSONArray("result").get(0);
 
 	}

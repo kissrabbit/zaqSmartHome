@@ -1,15 +1,15 @@
 package com.zaq.smartHome.pi4j.bodyInfrared;
 
-import java.util.concurrent.Future;
-
 import org.apache.log4j.Logger;
 
 import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import com.zaq.smartHome.pi4j.BaseGpio;
+import com.zaq.smartHome.pi4j.diode.Diode;
 
 /**
- * 人体红外感应
+ * 人体红外感应 HC-SR501 人体模块 5V
+ * 这个比软坑，需要人动才能感映得到
  * @author zaqzaq
  * 2015年12月20日
  *
@@ -24,10 +24,11 @@ public class BodyInfrared extends BaseGpio{
 	private static boolean hasInit=false;//初始化是否成功
 	private static final String gpioName="gpio.bodyInfrared";//配置文件对映的名称
 	//Singleton
-	public static BodyInfrared instace(){
+	public static BodyInfrared init(){
 		if(null==bodyInfrared){
 			try {
 				bodyInfrared=new BodyInfrared(gpioName,"");
+				logger.debug("初始人体红外感应器成功"+bodyInfrared.input.getName());
 				hasInit=true;
 			} catch (Exception e) {
 				logger.error("初始人体红外感应器失败", e);
@@ -61,12 +62,11 @@ public class BodyInfrared extends BaseGpio{
 	 * 检测到有人
 	 */
 	private void on(){
-		//打开超声波测距
+		Diode.init().runFastDuration(2000);
 	}
 	/**
 	 * 人走开了
 	 */
 	private void off(){
-		//关闭超声波测距
 	}
 }

@@ -10,19 +10,16 @@ import javax.sound.sampled.LineUnavailableException;
 
 import org.apache.log4j.Logger;
 
-import com.zaq.smartHome.baidu.STTutil;
 import com.zaq.smartHome.exception.ResRuningException;
 import com.zaq.smartHome.exception.SystemException;
 import com.zaq.smartHome.pi4j.BaseGpio;
 import com.zaq.smartHome.pi4j.been.Been;
 import com.zaq.smartHome.pi4j.diode.Diode;
 import com.zaq.smartHome.sound.AudioUtil;
-import com.zaq.smartHome.sound.Player;
 import com.zaq.smartHome.sound.Record;
-import com.zaq.smartHome.util.ThreadPool;
 
 /**
- * 超声波
+ * 超声波HC-SR04 模块控制 5V
  * @author zaqzaq
  * 2015年12月20日
  *
@@ -35,8 +32,8 @@ public class Csb extends BaseGpio{
 	protected static Logger logger=Logger.getLogger(Csb.class);
 	private static Csb csb; //Singleton 
 	private static boolean hasInit=false;//初始化是否成功
-	private static final String outGpioName="gpio.csb.send";//配置文件对映的名称
-	private static final String inGpioName="gpio.csb.rec";//配置文件对映的名称
+	private static final String outGpioName="gpio.csb.send";//配置文件对映的名称 trig（控制端）
+	private static final String inGpioName="gpio.csb.rec";//配置文件对映的名称  echo（接收端）
 	private static Executor executor;//测距的线程
 	private static Executor executorRecord;//录音的线程
 	private static boolean runFlag=false;//是否开启测距
@@ -44,7 +41,7 @@ public class Csb extends BaseGpio{
 	private static int STAT=0;//工作状态 0;1米外  1:1米内 2：0.5米内
 	
 	//Singleton
-	public static Csb instace(){
+	public static Csb init(){
 		if(null==csb){
 			try {
 				csb=new Csb(inGpioName,outGpioName);
@@ -67,8 +64,10 @@ public class Csb extends BaseGpio{
 			while(runFlag) {
 	        	
 	        	float  distance=checkdist();
-	        	
-	        	if(distance<0.49){
+	        	System.out.println("超声波检测距离："+distance+"m");
+	        	if(distance==0){
+	        		Been.init().runSlowDuration(1000);
+	        	}else if(distance<0.49){
 	        		if(STAT!=2){
 	        			//打开录音机
 	        			executorRecord.execute(new Runnable() {
@@ -92,7 +91,7 @@ public class Csb extends BaseGpio{
 	        			//关闭录音机
 	        			finishRecord();
 	        			//发光二极管闪  提示2秒 靠近一点
-	        			Diode.instace().runSlowDuration(2000);
+	        			Diode.init().runSlowDuration(1000);
 	        		}
 	        		STAT=1;
 	        	}else {
@@ -104,22 +103,29 @@ public class Csb extends BaseGpio{
 				}
 	        	
 	            try {
-					Thread.sleep(500);
+					Thread.sleep(1000);
 				} catch (InterruptedException e) {}
 	        }
 		}
 	}
 	
 	public void stop(){
+		STAT=0;
 		runFlag=false;
+		logger.debug("关闭超声波测距");
+		finishRecord();
 	}
 	
 	/**
 	 * 完成录音
 	 */
 	private void finishRecord(){
-		Record.stop();
-		if(!recordFail){
+		//中断录音前是否正在录音
+		boolean isRecordIng=Record.isRecordIng();
+		if(isRecordIng){
+			Record.stop();
+		}
+		if(!recordFail&&isRecordIng){
 			AudioUtil.done();
 		}
 	}

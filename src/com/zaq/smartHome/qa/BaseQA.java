@@ -1,5 +1,7 @@
 package com.zaq.smartHome.qa;
 
+import org.apache.log4j.Logger;
+
 /**
  * 指令处理 问答总接口
  * @author zaqzaq
@@ -7,12 +9,13 @@ package com.zaq.smartHome.qa;
  *
  */
 public abstract class BaseQA {
+	protected static Logger logger=Logger.getLogger(BaseQA.class);
 	/**
 	 * 先指令处理
 	 * @param question
 	 * @return
 	 */
-	public final String askLocation(String question){
+	private final String askLocation(String question){
 		
 		return null;
 	}
@@ -22,7 +25,7 @@ public abstract class BaseQA {
 			ask=askRemote(question);
 		}
 		
-		return null;
+		return ask;
 	}
-	public abstract String askRemote(String question);
+	protected abstract String askRemote(String question);
 }

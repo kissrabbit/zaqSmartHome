@@ -87,7 +87,7 @@ public class TTSutil {
      * @throws Exception
      */
     public static File done(String tex ,String toFilePath ,Runnable... execs) throws Exception {
-    	return done(tex, toFilePath, true, execs);
+    	return done(tex, toFilePath, false, execs);//不用jave转换了，直接用命令行 mplayer播放
     }
     
     public static void done(String tex ,final String toFilePath ) throws Exception {
@@ -95,11 +95,14 @@ public class TTSutil {
     			@Override
     			public void run() {
     				try {
-    					Player.play(new File(toFilePath));
-    				} catch (LineUnavailableException | SystemException | IOException e) {
+//    					Player.play(new File(toFilePath));
+    					Player.play(toFilePath);//直接用命令行 mplayer播放
+    					
+//    				} catch (LineUnavailableException | SystemException | IOException e) {
+    				} catch (Exception e) {
     					logger.error("播放文件："+toFilePath+"失败", e);
     					//轰鸣器 提示两秒
-    					Been.instace().runFastDuration(2000);
+    					Been.init().runFastDuration(2000);
     				}
     			}
     		});
