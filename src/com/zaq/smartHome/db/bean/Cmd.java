@@ -1,4 +1,4 @@
-package com.zaq.smartHome.db;
+package com.zaq.smartHome.db.bean;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -17,8 +17,8 @@ public class Cmd implements Serializable{
 	private String  py;//拼音 ：以拼音做查询更符合普通话不太标准和亲们
 	private Integer  type;//发送类型 1：红外 2：无线 
 	private String  code;//发送给设备的指令
-	private Integer  isSys;//是否为系统的指令 1：是 0：否
-	private Integer  isDel;//是否删除 1:是 0：否
+	private Short  isSys;//是否为系统的指令 1：是 0：否
+	private Short  isDel;//是否删除 1:是 0：否
 	private Date  timeCreate;//创建时间
 	private Integer autoDelayTime;//默认指定的延时（单位s秒）
 	private Long autoDelayExecId;//延时执行的指令
@@ -61,16 +61,16 @@ public class Cmd implements Serializable{
 	public void setCode(String code) {
 		this.code = code;
 	}
-	public Integer getIsSys() {
+	public Short getIsSys() {
 		return isSys;
 	}
-	public void setIsSys(Integer isSys) {
+	public void setIsSys(Short isSys) {
 		this.isSys = isSys;
 	}
-	public Integer getIsDel() {
+	public Short getIsDel() {
 		return isDel;
 	}
-	public void setIsDel(Integer isDel) {
+	public void setIsDel(Short isDel) {
 		this.isDel = isDel;
 	}
 	public Date getTimeCreate() {

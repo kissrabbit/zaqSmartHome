@@ -1,4 +1,4 @@
-package com.zaq.smartHome.db;
+package com.zaq.smartHome.util;
 /**
  * 常量集
  * @author zaqzaq
@@ -9,11 +9,11 @@ public interface Constant {
 	/**
 	 * yes
 	 */
-	public  final int Y=1;
+	public  final short Y=1;
 	/**
 	 * no
 	 */
-	public  final int N=0;
+	public  final short N=0;
 	/**
 	 * 红外指令
 	 */

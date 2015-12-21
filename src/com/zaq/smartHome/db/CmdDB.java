@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 
+import com.zaq.smartHome.db.bean.Cmd;
 import com.zaq.smartHome.util.BaseDao;
 
 /**
@@ -12,8 +13,8 @@ import com.zaq.smartHome.util.BaseDao;
  * 2015年12月14日
  *
  */
-public class CmdUtil {
-	private static Logger logger=Logger.getLogger(CmdUtil.class);
+public class CmdDB {
+	private static Logger logger=Logger.getLogger(CmdDB.class);
 	private static String getByPY="select * from cmd where py=? and isDel=0";
 	private static String getByID="select * from cmd where id=? and isDel=0";
 	

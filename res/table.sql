@@ -1,4 +1,3 @@
-
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
@@ -18,10 +17,25 @@ CREATE TABLE `cmd` (
   `autoDelayTime` smallint(6) DEFAULT NULL COMMENT '默认指定的延时（单位s秒）',
   `autoDelayExecId` bigint(20) DEFAULT NULL COMMENT '延时执行的指令',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='指令';
 
 -- ----------------------------
 -- Records of cmd
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `cmd_log`
+-- ----------------------------
+DROP TABLE IF EXISTS `cmd_log`;
+CREATE TABLE `cmd_log` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `cmdId` bigint(20) DEFAULT NULL COMMENT '执行的命令',
+  `timeCreate` datetime DEFAULT NULL COMMENT '执行的时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='命令日志';
+
+-- ----------------------------
+-- Records of cmd_log
 -- ----------------------------
 
 -- ----------------------------
@@ -46,12 +60,13 @@ DROP TABLE IF EXISTS `yuyin`;
 CREATE TABLE `yuyin` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `path` varchar(512) DEFAULT NULL COMMENT '音频文件路径',
-  `text` varchar(128) DEFAULT NULL COMMENT '文本',
+  `text` varchar(1000) DEFAULT NULL COMMENT '文本',
   `timeCreate` datetime DEFAULT NULL COMMENT '创建时间',
-  `userTimes` tinyint(4) DEFAULT NULL COMMENT '使用次数',
+  `useTimes` tinyint(4) DEFAULT NULL COMMENT '使用次数',
   `isSys` smallint(6) DEFAULT NULL COMMENT '是否为系统资源 1:是 0：否',
+  `isDel` smallint(6) DEFAULT NULL COMMENT '是否删除 1：是 0:否',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='语音缓存';
 
 -- ----------------------------
 -- Records of yuyin

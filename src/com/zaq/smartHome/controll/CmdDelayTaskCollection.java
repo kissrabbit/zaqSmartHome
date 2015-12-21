@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 /**
  * 延时任务容器
@@ -17,7 +18,7 @@ public class CmdDelayTaskCollection {
 	
 	private static ScheduledExecutorService executor=Executors.newScheduledThreadPool(5) ;
 	
-	private static Map<String, TimerTask> delayTasks=new HashMap<String, TimerTask>();
+	private static Map<String, ScheduledFuture<?>> delayTasks=new HashMap<>();
 	
 	/**
 	 * 取消或已完成任务
@@ -26,7 +27,7 @@ public class CmdDelayTaskCollection {
 	public static void delDelayTask(String code,Integer type){
 		String key=genKey(code, type);
 		if(delayTasks.containsKey(key)){
-			delayTasks.get(key) .cancel();
+			delayTasks.get(key) .cancel(true);
 		}
 	}
 	
@@ -46,9 +47,9 @@ public class CmdDelayTaskCollection {
 	public static void addDelayTask(String code,Integer type,TimerTask task,Integer delay){
 		delDelayTask(code, type);
 		
-		executor.schedule(task, delay, TimeUnit.MILLISECONDS);
+		ScheduledFuture<?> scheduledFuture= executor.schedule(task, delay, TimeUnit.MILLISECONDS);
 		
-		delayTasks.put(genKey(code, type), task);
+		delayTasks.put(genKey(code, type), scheduledFuture);
 		
 	}
 	/**

@@ -3,7 +3,7 @@ package com.zaq.smartHome.controll.command;
 import java.util.TimerTask;
 
 import com.zaq.smartHome.controll.CmdDelayTaskCollection;
-import com.zaq.smartHome.db.Cmd;
+import com.zaq.smartHome.db.bean.Cmd;
 
 public abstract class BaseCmd {
 	private Cmd cmd;//发射的设备码

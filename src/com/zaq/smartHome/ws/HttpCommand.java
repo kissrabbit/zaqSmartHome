@@ -11,9 +11,9 @@ import com.zaq.smartHome.controll.command.BaseCmd;
 import com.zaq.smartHome.controll.command.RF315Cmd;
 import com.zaq.smartHome.controll.command.RF433Cmd;
 import com.zaq.smartHome.controll.command.RedCmd;
-import com.zaq.smartHome.db.Cmd;
-import com.zaq.smartHome.db.CmdUtil;
-import com.zaq.smartHome.db.Constant;
+import com.zaq.smartHome.db.CmdDB;
+import com.zaq.smartHome.db.bean.Cmd;
+import com.zaq.smartHome.util.Constant;
 
 @RestController  
 @RequestMapping("/admin/command")
@@ -29,7 +29,7 @@ public class HttpCommand {
 	 * @return
 	 */
     public boolean exec(@PathVariable("id") Long id,@PathVariable("delay")Integer delay) {  
-		Cmd cmd=CmdUtil.getByID(id);
+		Cmd cmd=CmdDB.getByID(id);
 		
 		if(null!=cmd){
 			cmdCache.put(id, cmd);

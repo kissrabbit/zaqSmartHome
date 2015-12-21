@@ -1,6 +1,6 @@
 package com.zaq.smartHome.controll.command;
 
-import com.zaq.smartHome.db.Cmd;
+import com.zaq.smartHome.db.bean.Cmd;
 /**
  * 发送红外指令
  * @author zaqzaq
