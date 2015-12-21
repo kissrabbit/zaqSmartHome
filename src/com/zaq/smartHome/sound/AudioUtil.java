@@ -10,6 +10,8 @@ import org.apache.log4j.Logger;
 
 import com.zaq.smartHome.baidu.STTutil;
 import com.zaq.smartHome.baidu.TTSutil;
+import com.zaq.smartHome.db.YuYinDB;
+import com.zaq.smartHome.db.bean.YuYin;
 import com.zaq.smartHome.exception.SystemException;
 import com.zaq.smartHome.qa.robot.QAxiaoDu;
 import com.zaq.smartHome.util.AppUtil;
@@ -158,19 +160,24 @@ public class AudioUtil {
 				if(null==ask){
 					return;
 				}
-				//TODO 先从数据库缓存中找相同ask的信息
+				//先从数据库缓存中找相同ask的信息
+				YuYin yy=YuYinDB.getByTextAndUse(ask);
+				
+				if(null!=yy){
+					Player.play(yy.getPath());
+					return;
+				}
+				
 				String toFilePath=AudioUtil.AD_CONVER+File.separator+PinyingUtil.getPinYinHeadCharWithAz(ask)+System.currentTimeMillis()+".wav";
 				
 				try {
 					TTSutil.done(ask,toFilePath);
-					//TODO 添加语音到指令库
 				} catch (Exception e) {
 					logger.error("文字【"+ask+"】转语音失败",e);
 					playTTSFail();
 				}
-				
-				
-				
+				//添加语音到指令库
+				YuYinDB.add(ask, toFilePath);
 			}
 		});
 	}

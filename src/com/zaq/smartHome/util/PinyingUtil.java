@@ -368,11 +368,12 @@ public class PinyingUtil {
         return convert;  
     }   
     public static void main(String[] args) {
+    	System.out.println("是否大写");
     	System.out.println(getHeadString("是否大写"));
     	System.out.println(getHeadString("山西"));
     	System.out.println(getHeadString("陕西"));
     	System.out.println(getHeadString("甘肃省"));
-    	
+    	System.getProperties().list(System.out);
     	System.out.println(StringUtils.isAlpha("asdA1"));
     }
  

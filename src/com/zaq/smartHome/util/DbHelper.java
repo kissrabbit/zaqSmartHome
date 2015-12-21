@@ -9,9 +9,11 @@ import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.dbutils.BeanProcessor;
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.log4j.Logger;
 
 
 public class DbHelper {
+	private static Logger logger=Logger.getLogger(DbHelper.class);
 	private static boolean hasFULL=false;//数据库连接池是否爆掉
     private static DataSource dataSource;
     private static BeanProcessor processor=new BeanProcessor();
@@ -47,8 +49,7 @@ public class DbHelper {
     	try {
 			return dataSource.getConnection();
 		} catch (SQLException e) {
-			e.printStackTrace();//TODO   
-			System.out.println("数据连接池已爆满");
+			logger.error("数据连接池已爆满", e);
 			hasFULL=true;
 			return null;
 		}
@@ -71,7 +72,7 @@ public class DbHelper {
 	        dbcpDataSource.setMinEvictableIdleTimeMillis(Integer.valueOf(AppUtil.getPropertity("dbcp.MinEvictableIdleTimeMillis")));
 	        dbcpDataSource.setTimeBetweenEvictionRunsMillis(Integer.valueOf(AppUtil.getPropertity("dbcp.TimeBetweenEvictionRunsMillis")));
 	        dataSource=dbcpDataSource;
-	        System.out.println("Initialize dbcp...success.......");
+	        logger.info("Initialize dbcp...success.......");
     	 }
         return dataSource;
     }
