@@ -2,7 +2,6 @@ package com.zaq.smartHome;
 
 import java.io.IOException;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
@@ -33,12 +32,13 @@ public class RunMain extends SpringBootServletInitializer implements EmbeddedSer
 		AppUtil.init();
 		
 		//初始化硬件设备
-		BodyInfrared.init().listener();
-//		Csb.init().run();
-//		Been.init();
-//		Diode.init();
+		Csb.init();//初始化超声波检测
+		Been.init();//初始化轰鸣器
+		Diode.init();//初始化发光二极管
+		BodyInfrared.init().listener();//初始化并监听人体红外设备
+
 		
-//		SpringApplication.run(RunMain.class);  
+//		SpringApplication.run(RunMain.class);  运行WEB
 		while(true){
 			Thread.sleep(5000);
 		}

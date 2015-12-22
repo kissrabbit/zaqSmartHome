@@ -1,6 +1,5 @@
 package com.zaq.smartHome.pi4j.bodyInfrared;
 
-import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -11,7 +10,6 @@ import org.apache.log4j.Logger;
 import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import com.zaq.smartHome.pi4j.BaseGpio;
-import com.zaq.smartHome.pi4j.been.Been;
 import com.zaq.smartHome.pi4j.csb.Csb;
 import com.zaq.smartHome.pi4j.diode.Diode;
 
@@ -34,7 +32,7 @@ public class BodyInfrared extends BaseGpio{
 	private static boolean hasInit=false;//初始化是否成功
 	private static final String gpioName="gpio.bodyInfrared";//配置文件对映的名称
 	//Singleton
-	public static BodyInfrared init(){
+	public static BodyInfrared initOrGet(){
 		if(null==bodyInfrared){
 			try {
 				bodyInfrared=new BodyInfrared(gpioName,"");
@@ -78,16 +76,16 @@ public class BodyInfrared extends BaseGpio{
 			taskFuture.cancel(true);
 		}
 		
-		if(!Csb.init().isRun()){
-			Csb.init().run();
-			Diode.init().runFastDuration(2000);
+		if(!Csb.initOrGet().isRun()){
+			Csb.initOrGet().run();
+			Diode.initOrGet().runFastDuration(2000);
 		}
 		
 		//延迟1分钟关闭超声波
 		taskFuture=executor.schedule(new Runnable() {
 			@Override
 			public void run() {
-				Csb.init().stop();
+				Csb.initOrGet().stop();
 //				Been.init().runFastDuration(2000); 注掉，如果轰鸣会被红外检测到有人。。。。无语
 			}
 		}, 1, TimeUnit.MINUTES);

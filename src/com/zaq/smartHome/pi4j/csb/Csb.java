@@ -43,7 +43,7 @@ public class Csb extends BaseGpio{
 	private static int STAT=0;//工作状态 0;1米外  1:1米内 2：0.5米内
 	
 	//Singleton
-	public static Csb init(){
+	public static Csb initOrGet(){
 		if(null==csb){
 			try {
 				csb=new Csb(inGpioName,outGpioName);
@@ -74,7 +74,7 @@ public class Csb extends BaseGpio{
 			        	float  distance=checkdist();
 			        	System.out.println("超声波检测距离："+distance+"m");
 			        	if(distance==0){
-			        		Been.init().runSlowDuration(1000);
+			        		Been.initOrGet().runSlowDuration(1000);
 			        	}else if(distance<0.49){
 			        		if(STAT!=2){
 			        			//打开录音机
@@ -99,7 +99,7 @@ public class Csb extends BaseGpio{
 			        			//关闭录音机
 			        			finishRecord();
 			        			//发光二极管闪  提示2秒 靠近一点
-			        			Diode.init().runSlowDuration(1000);
+			        			Diode.initOrGet().runSlowDuration(1000);
 			        		}
 			        		STAT=1;
 			        	}else {

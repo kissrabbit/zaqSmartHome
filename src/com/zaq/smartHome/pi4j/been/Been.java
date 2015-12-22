@@ -25,7 +25,7 @@ public class Been extends BaseGpio{
 	private static final String gpioName="gpio.been";//配置文件对映的名称
 	private static Future<?> beenfuture;//轰鸣器工作任務
 	//Singleton
-	public static Been init(){
+	public static Been initOrGet(){
 		if(null==been){
 			try {
 				been=new Been("",gpioName);

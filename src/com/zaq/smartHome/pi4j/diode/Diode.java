@@ -25,7 +25,7 @@ public class Diode extends BaseGpio{
 	private static final String gpioName="gpio.diode";//配置文件对映的名称
 	private static Future<?> diodefuture;//发光二极管工作任務
 	//Singleton
-	public static Diode init(){
+	public static Diode initOrGet(){
 		if(null==diode){
 			try {
 				diode=new Diode("",gpioName);
