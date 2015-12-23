@@ -25,7 +25,7 @@
    
 ===============     
 ##License
-####zaqSmartHome is licensed under the [GNU](LICENSE)General Public License v2.0.
+####zaqSmartHome is licensed under the [GPL](LICENSE),GUN General Public License v2.0.
 ===============        
 -----------------------------------
    后续还可以考滤加入视频监控等等。。。。
