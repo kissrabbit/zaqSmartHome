@@ -28,4 +28,4 @@
 ####zaqSmartHome is licensed under the [GPL](LICENSE),GUN General Public License v2.0.
 ===============        
 -----------------------------------
-   后续还可以考滤加入视频监控等等。。。。
+   后续还可以考滤加入视频监控等等。。。。（交流群号：524561075）
