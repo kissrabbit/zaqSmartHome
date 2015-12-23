@@ -15,7 +15,7 @@ public class Cmd implements Serializable{
 	private String  function;//功能描述
 	private String  cmd;//文本字令
 	private String  py;//拼音 ：以拼音做查询更符合普通话不太标准和亲们
-	private Integer  type;//发送类型 1：红外 2：无线 
+	private Integer  type;//发送类型 1：红外 2：无线 3:gpio
 	private String  code;//发送给设备的指令
 	private Short  isSys;//是否为系统的指令 1：是 0：否
 	private Short  isDel;//是否删除 1:是 0：否

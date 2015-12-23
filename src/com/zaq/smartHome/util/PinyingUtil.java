@@ -110,9 +110,13 @@ public class PinyingUtil {
  
     }
  
-     
-    public static String hanziToPinyin(String hanzi){
-        return hanziToPinyin(hanzi," ");
+    /**
+     * 将汉字转换成拼音 以_隔开 只有字母数字
+     * @param hanzi
+     * @return
+     */
+    public static String hanziToPinyinWithAz(String hanzi){
+        return hanziToPinyin(hanzi,"_").replaceAll("\\W", "");
     }
     /**
      * 将汉字转换成拼音
@@ -369,12 +373,14 @@ public class PinyingUtil {
     }   
     public static void main(String[] args) {
     	System.out.println("是否大写");
+    	System.out.println(hanziToPinyinWithAz("是否大,123写xx"));
     	System.out.println(getHeadString("是否大写"));
     	System.out.println(getHeadString("山西"));
     	System.out.println(getHeadString("陕西"));
     	System.out.println(getHeadString("甘肃省"));
     	System.getProperties().list(System.out);
     	System.out.println(StringUtils.isAlpha("asdA1"));
+    	System.out.println(Constant.ASK_NOT_FIND_CMD.equals(null));
     }
  
 }

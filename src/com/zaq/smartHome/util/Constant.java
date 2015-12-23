@@ -6,6 +6,9 @@ package com.zaq.smartHome.util;
  *
  */
 public interface Constant {
+	
+	public static final String ASK_NOT_FIND_CMD="没有匹配到可执行的命令"; 
+	
 	/**
 	 * yes
 	 */
