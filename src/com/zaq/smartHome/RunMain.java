@@ -32,10 +32,10 @@ public class RunMain extends SpringBootServletInitializer implements EmbeddedSer
 		AppUtil.init();
 		
 		//初始化硬件设备
-		Csb.init();//初始化超声波检测
-		Been.init();//初始化轰鸣器
-		Diode.init();//初始化发光二极管
-		BodyInfrared.init().listener();//初始化并监听人体红外设备
+		Csb.initOrGet();//初始化超声波检测
+		Been.initOrGet();//初始化轰鸣器
+		Diode.initOrGet();//初始化发光二极管
+		BodyInfrared.initOrGet().listener();//初始化并监听人体红外设备
 
 		
 //		SpringApplication.run(RunMain.class);  运行WEB

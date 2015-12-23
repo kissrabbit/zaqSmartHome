@@ -102,7 +102,7 @@ public class TTSutil {
     				} catch (Exception e) {
     					logger.error("播放文件："+toFilePath+"失败", e);
     					//轰鸣器 提示两秒
-    					Been.init().runFastDuration(2000);
+    					Been.initOrGet().runFastDuration(2000);
     				}
     			}
     		});
