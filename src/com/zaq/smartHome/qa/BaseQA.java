@@ -2,6 +2,7 @@ package com.zaq.smartHome.qa;
 
 import org.apache.log4j.Logger;
 
+import com.zaq.smartHome.controll.CmdFactory;
 import com.zaq.smartHome.db.CmdDB;
 import com.zaq.smartHome.db.bean.Cmd;
 import com.zaq.smartHome.util.Constant;
@@ -22,12 +23,14 @@ public abstract class BaseQA {
 	 */
 	private final String askLocation(String question){
 		
-		//TODO 从中解析出延时的分钟数
+		//XXX 从中解析出延时的分钟数  命令格式： 指令+Na+分钟|分|小时 
+		//XXX	eg: 开灯十一分钟
 		
 		Cmd cmd=CmdDB.getByPY(PinyingUtil.hanziToPinyinWithAz(question));
 		
 		if(null!=cmd){
-			//TODO 执行命令
+			//XXX 执行命令
+			CmdFactory.newCommand(cmd).run();
 			
 			return null;
 		}else{

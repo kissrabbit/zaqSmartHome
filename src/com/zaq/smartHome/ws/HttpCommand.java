@@ -7,12 +7,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.zaq.smartHome.controll.command.BaseCmd;
+import com.zaq.smartHome.controll.BaseCmd;
+import com.zaq.smartHome.controll.CmdFactory;
 import com.zaq.smartHome.controll.command.RF315Cmd;
 import com.zaq.smartHome.controll.command.RF433Cmd;
 import com.zaq.smartHome.controll.command.RedCmd;
 import com.zaq.smartHome.db.CmdDB;
 import com.zaq.smartHome.db.bean.Cmd;
+import com.zaq.smartHome.exception.CmdNotFoundException;
 import com.zaq.smartHome.util.Constant;
 
 @RestController  
@@ -37,21 +39,12 @@ public class HttpCommand {
 		System.out.println(id);
 		
 		BaseCmd baseCmd=null;
-		
-		switch(cmd.getType()){
-			case Constant.TYPE_CMD_RED :
-				baseCmd=new RedCmd(cmd,delay);
-				break;
-			case Constant.TYPE_CMD_RF_315:
-				baseCmd=new RF315Cmd(cmd,delay);
-				break;
-			case Constant.TYPE_CMD_RF_433:
-				baseCmd=new RF433Cmd(cmd,delay);
-				break;
-			default:
-				logger.error("没有找到指令为："+id+"的ID");
-				return false;
+		try {
+			baseCmd = CmdFactory.newCommand(cmd, delay);
+		} catch (CmdNotFoundException e) {
+			return false;
 		}
+		
 		baseCmd.run();
 		
         return true;  

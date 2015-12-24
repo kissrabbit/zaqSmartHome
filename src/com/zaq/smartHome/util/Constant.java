@@ -29,4 +29,8 @@ public interface Constant {
 	 * 无线指令 433M
 	 */
 	public final int TYPE_CMD_RF_433=3;
+	/**
+	 * GPIO 引脚控制
+	 */
+	public final int TYPE_CMD_GPIO=4;
 }

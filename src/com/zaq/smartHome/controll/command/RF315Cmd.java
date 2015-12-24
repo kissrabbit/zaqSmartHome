@@ -1,5 +1,6 @@
 package com.zaq.smartHome.controll.command;
 
+import com.zaq.smartHome.controll.BaseCmd;
 import com.zaq.smartHome.db.bean.Cmd;
 /**
  * 发送无线315M指令

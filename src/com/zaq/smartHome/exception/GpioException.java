@@ -3,7 +3,7 @@ package com.zaq.smartHome.exception;
 import org.apache.log4j.Logger;
 
 /**
- * 系统 异常
+ * GPIO引脚 异常
  * @author zaqzaq
  * 2015年12月7日
  *

@@ -1,8 +1,7 @@
-package com.zaq.smartHome.controll.command;
+package com.zaq.smartHome.controll;
 
 import java.util.TimerTask;
 
-import com.zaq.smartHome.controll.CmdDelayTaskCollection;
 import com.zaq.smartHome.db.bean.Cmd;
 
 public abstract class BaseCmd {
@@ -29,7 +28,7 @@ public abstract class BaseCmd {
 	 */
 	public Integer getDelay() {
 		
-		if(null==delay){
+		if(null==delay||0==delay.intValue()){
 			delay=cmd.getAutoDelayTime();
 		}
 		return delay;
