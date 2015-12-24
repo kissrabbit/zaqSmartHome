@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.log4j.PropertyConfigurator;
+
+import com.zaq.smartHome.qa.ParseUtil;
 /**
  * 系统工具类
  * @author zaqzaq
@@ -31,7 +33,7 @@ public class AppUtil {
 		InputStream isConfigPi4j = new BufferedInputStream(AppUtil.class.getClassLoader().getResourceAsStream(configPi4j));
 		props.load(isConfigPi4j);
 		
-		HttpPoolUtil.init();
+		ParseUtil.init();//初始化模式解析工具
 	}
 
 	public static String getPropertity(String string) {

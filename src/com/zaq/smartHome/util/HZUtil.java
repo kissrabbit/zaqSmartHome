@@ -6,6 +6,9 @@ package com.zaq.smartHome.util;
  *
  */
 public class HZUtil {
+	
+	private static final  char[] cnArr = new char[]{'一','二','三','四','五','六','七','八','九'};
+	private static final  char[] chArr = new char[]{'十','百','千','万','亿'};
 	/**
 	 * 中文數字转阿拉伯数组【十万九千零六十  --> 109060】
 	 * @param chineseNumber
@@ -15,8 +18,6 @@ public class HZUtil {
 	  int result = 0;
 	  int temp = 1;//存放一个单位的数字如：十万
 	  int count = 0;//判断是否有chArr
-	  char[] cnArr = new char[]{'一','二','三','四','五','六','七','八','九'};
-	  char[] chArr = new char[]{'十','百','千','万','亿'};
 	  for (int i = 0; i < chineseNumber.length(); i++) {
 	    boolean b = true;//判断是否是chArr
 	    char c = chineseNumber.charAt(i);
@@ -67,6 +68,8 @@ public class HZUtil {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(chineseNumber2Int("六十一"));
+		System.out.println(chineseNumber2Int("一百六十三"));
+		System.out.println(chineseNumber2Int("十二"));
+		System.out.println(chineseNumber2Int("一十二"));
 	}
 }

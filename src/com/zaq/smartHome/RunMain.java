@@ -16,6 +16,7 @@ import com.zaq.smartHome.pi4j.bodyInfrared.BodyInfrared;
 import com.zaq.smartHome.pi4j.csb.Csb;
 import com.zaq.smartHome.pi4j.diode.Diode;
 import com.zaq.smartHome.util.AppUtil;
+import com.zaq.smartHome.util.HttpPoolUtil;
 
 /**
  * 程序主入口
@@ -37,7 +38,7 @@ public class RunMain extends SpringBootServletInitializer implements EmbeddedSer
 		Diode.initOrGet();//初始化发光二极管
 		BodyInfrared.initOrGet().listener();//初始化并监听人体红外设备
 
-		
+		HttpPoolUtil.init();//初始化http请求客户端连接池
 //		SpringApplication.run(RunMain.class);  运行WEB
 		while(true){
 			Thread.sleep(5000);

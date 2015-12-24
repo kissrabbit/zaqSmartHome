@@ -40,8 +40,10 @@ public class CmdDelayTaskCollection {
 	}
 	/**
 	 * 添加一条延时 指令任务
-	 * @param code
-	 * @param type
+	 * @param code 指令代码
+	 * @param type 指令类型
+	 * @param task 任务
+	 * @param delay 延时多少秒
 	 * @return
 	 */
 	public static void addDelayTask(String code,Integer type,TimerTask task,Integer delay){

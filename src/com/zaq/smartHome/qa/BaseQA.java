@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import com.zaq.smartHome.controll.CmdFactory;
 import com.zaq.smartHome.db.CmdDB;
 import com.zaq.smartHome.db.bean.Cmd;
+import com.zaq.smartHome.qa.ParseUtil.TextDelay;
 import com.zaq.smartHome.util.Constant;
 import com.zaq.smartHome.util.PinyingUtil;
 
@@ -22,14 +23,19 @@ public abstract class BaseQA {
 	 * @return
 	 */
 	private final String askLocation(String question){
-		//XXX 从中解析出延时的分钟数  命令格式： 指令+Na+分钟|分|小时|秒 
-		//XXX	eg: 开灯十一分钟
 		
-		Cmd cmd=CmdDB.getByPY(PinyingUtil.hanziToPinyinWithAz(question));
+		//解析指令
+		TextDelay textDelay  = ParseUtil.text2Cmd(question);
+		//非控制指令 ，返回进行QA机器回答
+		if(null==textDelay){
+			return Constant.ASK_NOT_FIND_CMD;
+		}
+		
+		Cmd cmd=CmdDB.getByPY(PinyingUtil.hanziToPinyinWithAz(textDelay.function));
 		
 		if(null!=cmd){
-			//XXX 执行命令
-			CmdFactory.newCommand(cmd).run();
+			//执行命令
+			CmdFactory.newCommand(cmd,textDelay.delay).run();
 			
 			return null;
 		}else{
