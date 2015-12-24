@@ -14,7 +14,7 @@ public class SystemException extends Exception{
 	
     public SystemException(String msg,Throwable e) {
         super("系统异常："+msg,e);
-		logger.info("系统异常："+msg, this);
+		logger.error("系统异常："+msg, this);
 
     }
 }

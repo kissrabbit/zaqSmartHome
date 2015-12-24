@@ -206,7 +206,7 @@ public class AudioUtil {
 		final String audioFilePath=AD_INIT+File.separator+"meSay2bd.wav";
 		logger.error("xx:"+text.toString());
 		try {
-			TTSutil.done(text.toString(),audioFilePath,new Runnable() {
+			TTSutil.done(text.toString(),audioFilePath,true,new Runnable() {
 				@Override
 				public void run() {
 					try {

@@ -22,8 +22,7 @@ public abstract class BaseQA {
 	 * @return
 	 */
 	private final String askLocation(String question){
-		
-		//XXX 从中解析出延时的分钟数  命令格式： 指令+Na+分钟|分|小时 
+		//XXX 从中解析出延时的分钟数  命令格式： 指令+Na+分钟|分|小时|秒 
 		//XXX	eg: 开灯十一分钟
 		
 		Cmd cmd=CmdDB.getByPY(PinyingUtil.hanziToPinyinWithAz(question));

@@ -7,17 +7,12 @@ import it.sauronsoftware.jave.EncodingAttributes;
 import it.sauronsoftware.jave.InputFormatException;
 
 import java.io.File;
-import java.io.IOException;
-
-import javax.sound.sampled.LineUnavailableException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 
-import com.zaq.smartHome.exception.SystemException;
 import com.zaq.smartHome.pi4j.been.Been;
-import com.zaq.smartHome.pi4j.diode.Diode;
 import com.zaq.smartHome.sound.Player;
 import com.zaq.smartHome.util.AppUtil;
 import com.zaq.smartHome.util.BDUtil;
@@ -52,10 +47,10 @@ public class TTSutil {
         
     }
     /**
-     * 将文字转换成音频文件后 运行 exec线程 (转换成wav格式后文件变大了8倍-_-!后续换jmf再试下)
+     * 将文字转换成音频文件后 运行 exec线程 
      * @param tex 文本 
      * @param toFile  存储的目标音频文件
-     * @param change2Wav 是否转换成wav格式
+     * @param change2Wav 是否用jave转换成wav格式(转换成wav格式后文件变大了8倍-_-!)
      * @param exec 文件储存后并发运行的线程
      * @throws Exception
      */
@@ -79,19 +74,25 @@ public class TTSutil {
     	
     	
     }
+//    /**
+//     * 将文字转换成音频文件后 运行 exec线程 (不转换成wav格式)
+//     * @param tex 文本 
+//     * @param toFile  存储的目标音频文件
+//     * @param exec 文件储存后并发运行的线程
+//     * @throws Exception
+//     */
+//    public static File done(String tex ,String toFilePath ,Runnable... execs) throws Exception {
+//    	return done(tex, toFilePath, false, execs);//不用jave转换了，直接用命令行 mplayer播放
+//    }
     /**
-     * 将文字转换成音频文件后 运行 exec线程 (不转换成wav格式)
-     * @param tex 文本 
-     * @param toFile  存储的目标音频文件
-     * @param exec 文件储存后并发运行的线程
+     * 将文本转化成音频并播放
+     * @param tex
+     * @param toFilePath
      * @throws Exception
      */
-    public static File done(String tex ,String toFilePath ,Runnable... execs) throws Exception {
-    	return done(tex, toFilePath, false, execs);//不用jave转换了，直接用命令行 mplayer播放
-    }
-    
     public static void done(String tex ,final String toFilePath ) throws Exception {
-    	   done(tex,toFilePath,new Runnable() {
+    		//不用jave做音频转换 ,用mplayer软件播放
+    	   done(tex,toFilePath,false,new Runnable() {
     			@Override
     			public void run() {
     				try {

@@ -11,6 +11,7 @@ import java.net.URL;
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.message.BasicHeader;
@@ -69,7 +70,7 @@ public class STTutil {
 		String httpRes=HttpPoolUtil.postRetStr(API_URI + "?cuid=" + AppUtil.getPropertity("cuid") + "&token=" + BDUtil.getToken(), 
 												new BasicHeader("Content-Type", "audio/"+fileFormat+"; rate=8000"),byteArrayEntity);
 		logger.debug("请求语识别返回："+httpRes);
-		return (String) new JSONObject(httpRes).getJSONArray("result").get(0);
+		return getText(httpRes);
 
 	}
 	
@@ -84,8 +85,12 @@ public class STTutil {
 		String httpRes=HttpPoolUtil.postRetStr(API_URI + "?cuid=" + AppUtil.getPropertity("cuid") + "&token=" + BDUtil.getToken(), 
 												new BasicHeader("Content-Type", "audio/"+fileFormat+"; rate=8000"),inputStreamEntity);
 		logger.debug("请求语识别返回："+httpRes);
-		return (String) new JSONObject(httpRes).getJSONArray("result").get(0);
+		return getText(httpRes);
 
+	}
+	
+	private static String getText(String httpRes){
+		return StringUtils.removeEnd((String) new JSONObject(httpRes).getJSONArray("result").get(0), "，");
 	}
 	
 	@Deprecated

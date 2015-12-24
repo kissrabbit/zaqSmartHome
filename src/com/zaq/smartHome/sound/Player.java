@@ -84,11 +84,20 @@ public class Player {
 
 		logger.debug("音频播放完毕");
 	}
-
+	/**
+	 * 用JAVA自带的播放音频
+	 * @param audioFile
+	 * @throws LineUnavailableException
+	 * @throws SystemException
+	 * @throws IOException
+	 */
 	public static void play(File audioFile) throws LineUnavailableException, SystemException, IOException {
 		play(new FileInputStream(audioFile));
 	}
-
+	/**
+	 * 用mplayer 软件播放音频
+	 * @param toFilePath
+	 */
 	public synchronized static void play(final String toFilePath) {
 		ThreadPool.execute(new Runnable() {
 			

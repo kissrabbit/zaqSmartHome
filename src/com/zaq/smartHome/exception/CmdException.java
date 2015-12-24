@@ -14,12 +14,12 @@ public class CmdException extends RuntimeException{
 	
 	public CmdException(String msg){
 		super(msg);
-		logger.info("cmd指令异常："+msg, this);
+		logger.error("cmd指令异常："+msg, this);
 	}
 	
     public CmdException(String msg,Throwable e) {
         super("cmd指令异常："+msg,e);
-		logger.info("cmd指令异常："+msg, this);
+		logger.error("cmd指令异常："+msg, this);
 
     }
 }

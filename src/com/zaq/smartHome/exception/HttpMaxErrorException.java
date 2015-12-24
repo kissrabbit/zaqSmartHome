@@ -16,12 +16,12 @@ public class HttpMaxErrorException extends HttpRequestException{
 	
 	public HttpMaxErrorException(String url){
 		super(url);
-		logger.info("请求："+url+ " 失败，超过了最大错误请求数("+AppUtil.getMaxError()+")", this);
+		logger.error("请求："+url+ " 失败，超过了最大错误请求数("+AppUtil.getMaxError()+")", this);
 	}
 	
     public HttpMaxErrorException(String url,Throwable e) {
         super("请求："+url+ " 失败，超过了最大错误请求数("+AppUtil.getMaxError()+")",e);
-		logger.info("请求："+url+ " 失败，超过了最大错误请求数("+AppUtil.getMaxError()+")", this);
+		logger.error("请求："+url+ " 失败，超过了最大错误请求数("+AppUtil.getMaxError()+")", this);
 
     }
 }

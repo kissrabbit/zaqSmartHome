@@ -14,12 +14,12 @@ public class HttpRequestException extends Exception{
 	private static final long serialVersionUID = 1L;
 	private static Logger logger=Logger.getLogger(HttpRequestException.class);
 	public HttpRequestException(String url){
-		logger.info("请求："+url+ " 失败", this);
+		logger.error("请求："+url+ " 失败", this);
 	}
 	
     public HttpRequestException(String url,Throwable e) {
         super("请求："+url+ " 失败",e);
-		logger.info("请求："+url+ " 失败", this);
+		logger.error("请求："+url+ " 失败", this);
 
     }
 }

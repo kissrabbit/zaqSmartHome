@@ -14,12 +14,12 @@ public class GpioException extends Exception{
 	
 	public GpioException(String msg){
 		super(msg);
-		logger.info("gpio异常："+msg, this);
+		logger.error("gpio异常："+msg, this);
 	}
 	
     public GpioException(String msg,Throwable e) {
         super("gpio异常："+msg,e);
-		logger.info("gpio异常："+msg, this);
+		logger.error("gpio异常："+msg, this);
 
     }
 }
