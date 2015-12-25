@@ -59,4 +59,23 @@ public class BaseGpio extends RaspiPin{
 		
 		return createDigitalAndPwmPin(pinCode, "GPIO #"+pinCode);
 	}
+	
+	/**
+	 * 按wirtePin 获取取引脚对象
+	 * @param pinCode wpi引脚编码
+	 * @return
+	 * @throws Exception
+	 */
+	public static Pin getGpioPin(int pinCode)throws GpioException{
+		if(pinCode<0||pinCode>29){
+			throw new GpioException("引脚："+pinCode+"不存在");
+		}
+		
+		Pin pin=getPinByAddress(pinCode);
+		if(null==pin){
+			pin=createDigitalAndPwmPin(pinCode, "GPIO #"+pinCode);
+		}
+		return pin;
+	}
+	
 }

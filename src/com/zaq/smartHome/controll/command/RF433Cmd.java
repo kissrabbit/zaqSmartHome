@@ -21,10 +21,4 @@ public class RF433Cmd extends BaseCmd{
 		// TODO Auto-generated method stub
 		
 	}
-	@Override
-	public void execDelay() {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

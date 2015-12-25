@@ -31,7 +31,7 @@ public abstract class BaseQA {
 			return Constant.ASK_NOT_FIND_CMD;
 		}
 		
-		Cmd cmd=CmdDB.getByPY(PinyingUtil.hanziToPinyinWithAz(textDelay.function));
+		Cmd cmd=CmdDB.getByPY(PinyingUtil.hanziToPinyinWithAz(textDelay.cmd));
 		
 		if(null!=cmd){
 			//执行命令

@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
  * 2015年12月7日
  *
  */
-public class GpioException extends Exception{
+public class GpioException extends RuntimeException{
 	private static final long serialVersionUID = 1L;
 	private static Logger logger=Logger.getLogger(GpioException.class);
 	

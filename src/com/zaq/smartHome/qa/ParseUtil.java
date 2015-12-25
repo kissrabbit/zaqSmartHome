@@ -20,8 +20,8 @@ public class ParseUtil {
 	 *
 	 */
 	public static class TextDelay{
-		public int delay;
-		public String function;
+		public int delay; //延时delay秒
+		public String cmd;//执行的指令
 	}
 	
 	private final static String S="秒";
@@ -49,7 +49,7 @@ public class ParseUtil {
 		Matcher matcher= pattern.matcher(text);
 		if(matcher.find()){
 			TextDelay textDelay=new TextDelay();
-			textDelay.function=matcher.group(1);
+			textDelay.cmd=matcher.group(1);
 			
 			String unit=matcher.group(3);
 			
@@ -92,7 +92,7 @@ public class ParseUtil {
 		TextDelay textDelay =text2Cmd("开灯十一分");
 		
 		System.out.println(textDelay.delay);
-		System.out.println(textDelay.function);
+		System.out.println(textDelay.cmd);
 		
 	}
 }
