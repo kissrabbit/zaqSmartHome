@@ -72,7 +72,7 @@ public class Csb extends BaseGpio{
 					while(runFlag) {
 			        	
 			        	float  distance=checkdist();
-			        	System.out.println("超声波检测距离："+distance+"m");
+//			        	System.out.println("超声波检测距离："+distance+"m");
 			        	if(distance==0){
 			        		Been.initOrGet().runSlowDuration(1000);
 			        	}else if(distance<0.49){

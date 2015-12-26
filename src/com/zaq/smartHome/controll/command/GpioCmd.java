@@ -22,6 +22,10 @@ public class GpioCmd extends BaseCmd{
 	 * gpio自定义输出引脚缓存
 	 */
 	protected static WeakHashMap<Pin, GpioPinDigitalOutput> outPinsCache=new WeakHashMap<>();
+	
+	public GpioCmd(Cmd cmd) {
+		super(cmd);
+	}
 	public GpioCmd(Cmd cmd, Integer delay) {
 		super(cmd, delay);
 	}
@@ -30,7 +34,7 @@ public class GpioCmd extends BaseCmd{
 	 * 执行gpio类型的引脚控制指令
 	 */
 	@Override
-	public void exec() {
+	protected void exec() {
 		int pinCode=Integer.valueOf(this.getCommand().getCode());
 		
 		Pin pin= BaseGpio.getGpioPin(Math.abs(pinCode));

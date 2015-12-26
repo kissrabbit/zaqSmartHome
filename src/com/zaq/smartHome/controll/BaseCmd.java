@@ -45,7 +45,7 @@ public abstract class BaseCmd {
 	/**
 	 * 指令具体操作
 	 */
-	public abstract void exec();
+	protected abstract void exec();
 	
 	/**
 	 * 延时指令具体操作

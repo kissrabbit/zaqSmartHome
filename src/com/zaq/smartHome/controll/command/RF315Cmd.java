@@ -18,7 +18,7 @@ public class RF315Cmd extends BaseCmd{
 	}
 
 	@Override
-	public void exec() {
+	protected void exec() {
 		// TODO Auto-generated method stub
 		
 	}

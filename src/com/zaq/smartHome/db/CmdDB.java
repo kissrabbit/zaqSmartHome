@@ -27,6 +27,9 @@ public class CmdDB {
 		Cmd cmd=null;;
 		try {
 			cmd = BaseDao.getInstance().queryForObject(Cmd.class, getByPY, py);
+			if(null!=cmd&&null!=cmd.getAutoDelayExecId()){
+				cmd.setAutoDelayExecCmd(BaseDao.getInstance().queryForObject(Cmd.class, getByID, cmd.getAutoDelayExecId()));
+			}
 		} catch (SQLException e) {
 			logger.error("按拼音"+py+"查询指令失败", e);
 		}
@@ -43,7 +46,7 @@ public class CmdDB {
 		try {
 			cmd = BaseDao.getInstance().queryForObject(Cmd.class, getByID, id);
 			
-			if(null!=cmd.getAutoDelayExecId()){
+			if(null!=cmd&&null!=cmd.getAutoDelayExecId()){
 				cmd.setAutoDelayExecCmd(BaseDao.getInstance().queryForObject(Cmd.class, getByID, cmd.getAutoDelayExecId()));
 			}
 			

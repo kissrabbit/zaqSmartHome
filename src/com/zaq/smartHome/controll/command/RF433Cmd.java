@@ -17,7 +17,7 @@ public class RF433Cmd extends BaseCmd{
 		super(cmd, delay);
 	}
 	@Override
-	public void exec() {
+	protected void exec() {
 		// TODO Auto-generated method stub
 		
 	}

@@ -18,6 +18,7 @@ import javax.sound.sampled.SourceDataLine;
 import org.apache.log4j.Logger;
 
 import com.zaq.smartHome.exception.SystemException;
+import com.zaq.smartHome.pi4j.been.Been;
 import com.zaq.smartHome.util.ThreadPool;
 
 /**
@@ -104,11 +105,13 @@ public class Player {
 			@Override
 			public void run() {
 				InputStreamReader ir=null;
+				Process process=null;
+				String commands = "mplayer "+toFilePath;
 				try {
-					String commands = "mplayer "+toFilePath;
-
-					Process process = Runtime.getRuntime().exec(commands);
-
+					
+					logger.info("mplayer开始播放音频:"+commands);
+					process = Runtime.getRuntime().exec(commands);
+					logger.info("mplayer结束播放音频:"+commands);
 					ir = new InputStreamReader(process.getInputStream());
 					BufferedReader input = new BufferedReader(ir);
 					String line;
@@ -116,12 +119,16 @@ public class Player {
 						logger.debug(line);
 					}
 				} catch (IOException e) {
-					logger.error("mplayer播放音频异常" , e);
+					logger.error("mplayer播放音频:"+commands+"异常" , e);
+					Been.initOrGet().runFastDuration(3000);
 				}finally{
 					if(null!=ir){
 						try {
 							ir.close();
 						} catch (IOException e) {}
+					}
+					if(null!=process){
+						process.destroy();
 					}
 				}
 			}

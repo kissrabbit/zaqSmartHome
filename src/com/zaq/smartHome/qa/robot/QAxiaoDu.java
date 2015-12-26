@@ -29,7 +29,7 @@ public class QAxiaoDu extends BaseQA {
 			logger.debug("问题："+question+"\r\n返回："+httpRes);
 		//		return new JSONObject(httpRes).getJSONArray("result_list").getJSONObject(0).getJSONObject("result_content").getString("answer");
 		String ask=new JSONObject(new JSONObject(httpRes).getJSONArray("result_list").getJSONObject(0).get("result_content").toString()).getString("answer");
-		return ask.replaceAll("小度", "那B小心");
+		return ask.replaceAll("小度", "那B小心").replaceAll("百度", "果果");
 	}
 	
 	public static void main(String[] args) {

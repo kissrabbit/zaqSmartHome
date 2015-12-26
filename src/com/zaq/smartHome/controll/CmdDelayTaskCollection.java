@@ -49,10 +49,9 @@ public class CmdDelayTaskCollection {
 	public static void addDelayTask(String code,Integer type,TimerTask task,Integer delay){
 		delDelayTask(code, type);
 		
-		ScheduledFuture<?> scheduledFuture= executor.schedule(task, delay, TimeUnit.MILLISECONDS);
+		ScheduledFuture<?> scheduledFuture= executor.schedule(task, delay, TimeUnit.SECONDS);
 		
 		delayTasks.put(genKey(code, type), scheduledFuture);
-		
 	}
 	/**
 	 * key = type+"--"+code

@@ -19,7 +19,7 @@ public class RedCmd extends BaseCmd{
 	}
 
 	@Override
-	public void exec() {
+	protected void exec() {
 		// TODO Auto-generated method stub
 		
 	}

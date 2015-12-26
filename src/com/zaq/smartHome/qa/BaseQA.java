@@ -23,18 +23,25 @@ public abstract class BaseQA {
 	 * @return
 	 */
 	private final String askLocation(String question){
+		Cmd cmd=CmdDB.getByPY(PinyingUtil.hanziToPinyinWithAz(question));
 		
-		//解析指令
+		if(null!=cmd){
+			//执行无延时指令
+			CmdFactory.newCommand(cmd).run();
+			return null;
+		}
+		
+		//解析延时指令
 		TextDelay textDelay  = ParseUtil.text2Cmd(question);
 		//非控制指令 ，返回进行QA机器回答
 		if(null==textDelay){
 			return Constant.ASK_NOT_FIND_CMD;
 		}
 		
-		Cmd cmd=CmdDB.getByPY(PinyingUtil.hanziToPinyinWithAz(textDelay.cmd));
+		cmd=CmdDB.getByPY(PinyingUtil.hanziToPinyinWithAz(textDelay.cmd));
 		
 		if(null!=cmd){
-			//执行命令
+			//执行有延时指令
 			CmdFactory.newCommand(cmd,textDelay.delay).run();
 			
 			return null;

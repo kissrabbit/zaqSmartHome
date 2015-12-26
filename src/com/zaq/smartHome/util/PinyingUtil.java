@@ -382,9 +382,10 @@ public class PinyingUtil {
     	System.out.println(StringUtils.isAlpha("asdA1"));
     	System.out.println(Constant.ASK_NOT_FIND_CMD.equals(null));
     	
+    	System.out.println(hanziToPinyinWithAz("打开灯"));
 		System.out.println(hanziToPinyinWithAz("开灯"));
 		System.out.println(hanziToPinyinWithAz("关灯"));
-    	
+		System.out.println(hanziToPinyinWithAz("海灯"));
     }
  
 }

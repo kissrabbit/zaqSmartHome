@@ -1,5 +1,6 @@
 package com.zaq.smartHome.controll;
 
+import com.zaq.smartHome.controll.command.GpioCmd;
 import com.zaq.smartHome.controll.command.RF315Cmd;
 import com.zaq.smartHome.controll.command.RF433Cmd;
 import com.zaq.smartHome.controll.command.RedCmd;
@@ -33,7 +34,7 @@ public class CmdFactory {
 				baseCmd=new RF433Cmd(cmd,delay);
 				break;
 			case Constant.TYPE_CMD_GPIO:
-				baseCmd=new RF433Cmd(cmd,delay);
+				baseCmd=new GpioCmd(cmd,delay);
 				break;
 			default :
 				throw new CmdNotFoundException(cmd.getFunction()+"类型"+cmd.getType()+"的指令不存在");
@@ -61,7 +62,7 @@ public class CmdFactory {
 				baseCmd=new RF433Cmd(cmd);
 				break;
 			case Constant.TYPE_CMD_GPIO:
-				baseCmd=new RF433Cmd(cmd);
+				baseCmd=new GpioCmd(cmd);
 				break;
 			default :
 				throw new CmdNotFoundException(cmd.getFunction()+"类型"+cmd.getType()+"的指令不存在");
