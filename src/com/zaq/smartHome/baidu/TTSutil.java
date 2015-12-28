@@ -90,6 +90,7 @@ public class TTSutil {
      * @param toFilePath
      * @throws Exception
      */
+    @Deprecated
     public static void done(String tex ,final String toFilePath ) throws Exception {
     		//不用jave做音频转换 ,用mplayer软件播放
     	   done(tex,toFilePath,false,new Runnable() {

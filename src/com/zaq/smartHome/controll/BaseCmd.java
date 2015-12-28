@@ -41,6 +41,7 @@ public abstract class BaseCmd {
 	 */
 	public void beforExec(){
 		logger.info("开始执行命令:"+command.getCmd());
+		//TODO  记录Cmd_log 日志到数据库
 	}
 	/**
 	 * 指令具体操作

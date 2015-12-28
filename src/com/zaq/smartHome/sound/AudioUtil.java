@@ -160,24 +160,27 @@ public class AudioUtil {
 				if(null==ask){
 					return;
 				}
-				//先从数据库缓存中找相同ask的信息
-				YuYin yy=YuYinDB.getByTextAndUse(ask);
 				
-				if(null!=yy){
-					Player.play(yy.getPath());
-					return;
-				}
 				
-				String toFilePath=AudioUtil.AD_CONVER+File.separator+PinyingUtil.getPinYinHeadCharWithAz(ask)+System.currentTimeMillis()+".wav";
-				
-				try {
-					TTSutil.done(ask,toFilePath);
-				} catch (Exception e) {
-					logger.error("文字【"+ask+"】转语音失败",e);
-					playTTSFail();
-				}
-				//添加语音到指令库
-				YuYinDB.add(ask, toFilePath);
+				Player.playText(ask);
+//				//先从数据库缓存中找相同ask的信息
+//				YuYin yy=YuYinDB.getByTextAndUse(ask);
+//				
+//				if(null!=yy){
+//					Player.play(yy.getPath());
+//					return;
+//				}
+//				
+//				String toFilePath=AudioUtil.AD_CONVER+File.separator+PinyingUtil.getPinYinHeadCharWithAz(ask)+System.currentTimeMillis()+".wav";
+//				
+//				try {
+//					TTSutil.done(ask,toFilePath);
+//				} catch (Exception e) {
+//					logger.error("文字【"+ask+"】转语音失败",e);
+//					playTTSFail();
+//				}
+//				//添加语音到指令库
+//				YuYinDB.add(ask, toFilePath);
 			}
 		});
 	}

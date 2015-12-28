@@ -17,8 +17,12 @@ import javax.sound.sampled.SourceDataLine;
 
 import org.apache.log4j.Logger;
 
+import com.zaq.smartHome.baidu.TTSutil;
+import com.zaq.smartHome.db.YuYinDB;
+import com.zaq.smartHome.db.bean.YuYin;
 import com.zaq.smartHome.exception.SystemException;
 import com.zaq.smartHome.pi4j.been.Been;
+import com.zaq.smartHome.util.PinyingUtil;
 import com.zaq.smartHome.util.ThreadPool;
 
 /**
@@ -95,9 +99,47 @@ public class Player {
 	public static void play(File audioFile) throws LineUnavailableException, SystemException, IOException {
 		play(new FileInputStream(audioFile));
 	}
+	
+	/**
+	 * 音频播放文字
+	 * @param text 文本
+	 */
+	public static void playText(String text){
+		//先从数据库缓存中找相同ask的信息
+		YuYin yy=YuYinDB.getByTextAndUse(text);
+		
+		if(null!=yy){
+			Player.play(yy.getPath());
+			return;
+		}
+		
+		final String toFilePath=AudioUtil.AD_CONVER+File.separator+PinyingUtil.getPinYinHeadCharWithAz(text)+System.currentTimeMillis()+".wav";
+		
+		try {
+	  		//不用jave做音频转换 ,用mplayer软件播放
+			TTSutil.done(text,toFilePath,false,new Runnable() {
+	    			@Override
+	    			public void run() {
+	    				try {
+	    					play(toFilePath);//直接用命令行 mplayer播放
+	    				} catch (Exception e) {
+	    					logger.error("播放文件："+toFilePath+"失败", e);
+	    					//轰鸣器 提示两秒
+	    					Been.initOrGet().runFastDuration(2000);
+	    				}
+	    			}
+	    		});
+		} catch (Exception e) {
+			logger.error("文字【"+text+"】转语音失败",e);
+			AudioUtil.playTTSFail();
+		}
+		//添加语音到指令库
+		YuYinDB.add(text, toFilePath);
+	}
+	
 	/**
 	 * 用mplayer 软件播放音频
-	 * @param toFilePath
+	 * @param toFilePath 音频路径
 	 */
 	public synchronized static void play(final String toFilePath) {
 		ThreadPool.execute(new Runnable() {
