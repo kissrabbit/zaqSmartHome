@@ -12,9 +12,9 @@ import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListener;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 
-public class RF433Receive
+public class RF433ReceiveTest
 {
-	private static Logger logger=Logger.getLogger(RF433Receive.class);
+	private static Logger logger=Logger.getLogger(RF433ReceiveTest.class);
   //public static int RCSWITCH_MAX_CHANGES = 67;
 	 public static int RCSWITCH_MAX_CHANGES = 800;
 

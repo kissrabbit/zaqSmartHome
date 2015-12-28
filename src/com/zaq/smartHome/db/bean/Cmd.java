@@ -23,6 +23,8 @@ public class Cmd implements Serializable{
 	private Integer autoDelayTime;//默认指定的延时（单位s秒）
 	private Long autoDelayExecId;//延时执行的指令
 	
+	private Long wirelessProtocol;//使用的无线传输协议 使用Long类型防止后续RF433Protocol扩展到数据库中维护
+	
 	private Cmd autoDelayExecCmd;//延时执行的指令 对象
 	
 	public Long getId() {
@@ -96,5 +98,11 @@ public class Cmd implements Serializable{
 	}
 	public void setAutoDelayExecCmd(Cmd autoDelayExecCmd) {
 		this.autoDelayExecCmd = autoDelayExecCmd;
+	}
+	public Long getWirelessProtocol() {
+		return wirelessProtocol;
+	}
+	public void setWirelessProtocol(Long wirelessProtocol) {
+		this.wirelessProtocol = wirelessProtocol;
 	}
 }

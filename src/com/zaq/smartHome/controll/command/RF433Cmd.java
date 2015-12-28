@@ -2,6 +2,8 @@ package com.zaq.smartHome.controll.command;
 
 import com.zaq.smartHome.controll.BaseCmd;
 import com.zaq.smartHome.db.bean.Cmd;
+import com.zaq.smartHome.pi4j.rf.RF433;
+import com.zaq.smartHome.pi4j.rf.RF433Protocol;
 /**
  * 发送无线433M指令
  * @author zaqzaq
@@ -18,7 +20,8 @@ public class RF433Cmd extends BaseCmd{
 	}
 	@Override
 	protected void exec() {
-		// TODO Auto-generated method stub
 		
+		RF433.initOrGet().send(Integer.valueOf(getCommand().getCode()),
+								RF433Protocol.getById(getCommand().getWirelessProtocol().intValue()));
 	}
 }

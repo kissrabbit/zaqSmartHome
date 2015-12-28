@@ -27,21 +27,18 @@ public class BodyInfrared extends BaseGpio{
 	
 	private static ScheduledExecutorService executor;
 	private static ScheduledFuture<?> taskFuture;
-	private static Logger logger=Logger.getLogger(BodyInfrared.class);
 	private static BodyInfrared bodyInfrared; //Singleton 
-	private static boolean hasInit=false;//初始化是否成功
 	private static final String gpioName="gpio.bodyInfrared";//配置文件对映的名称
 	//Singleton
 	public static BodyInfrared initOrGet(){
 		if(null==bodyInfrared){
 			try {
 				bodyInfrared=new BodyInfrared(gpioName,"");
-				logger.debug("初始人体红外感应器成功"+bodyInfrared.input.getName());
-				hasInit=true;
+				logger.info("初始人体红外感应器成功"+bodyInfrared.input.getName());
 				executor=Executors.newSingleThreadScheduledExecutor();
 			} catch (Exception e) {
 				logger.error("初始人体红外感应器失败", e);
-				hasInit=false;
+				bodyInfrared.hasInit=false;
 			}
 		}
 		return bodyInfrared;

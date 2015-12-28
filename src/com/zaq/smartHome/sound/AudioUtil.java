@@ -10,12 +10,9 @@ import org.apache.log4j.Logger;
 
 import com.zaq.smartHome.baidu.STTutil;
 import com.zaq.smartHome.baidu.TTSutil;
-import com.zaq.smartHome.db.YuYinDB;
-import com.zaq.smartHome.db.bean.YuYin;
 import com.zaq.smartHome.exception.SystemException;
 import com.zaq.smartHome.qa.robot.QAxiaoDu;
 import com.zaq.smartHome.util.AppUtil;
-import com.zaq.smartHome.util.PinyingUtil;
 import com.zaq.smartHome.util.ThreadPool;
 /**
  * 音频工具类
@@ -46,6 +43,17 @@ public class AudioUtil {
 			Player.play(new File(AD_INIT+File.separator+"tts_fail.wav"));
 		} catch (Exception e) {
 			logger.error("播个语音合成失败都不行么！XXX", e);
+		}
+	}
+	
+	/**
+	 * 播个系统初始化完成 提示音
+	 */
+	public static void playAppInit(){
+		try {
+			Player.play(new File(AD_INIT+File.separator+"init_over.wav"));
+		} catch (Exception e) {
+			logger.error("播个系统初始化完成都不行么！XXX", e);
 		}
 	}
 	/**

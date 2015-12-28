@@ -2,8 +2,6 @@ package com.zaq.smartHome.pi4j.been;
 
 import java.util.concurrent.Future;
 
-import org.apache.log4j.Logger;
-
 import com.pi4j.wiringpi.Gpio;
 import com.zaq.smartHome.pi4j.BaseGpio;
 import com.zaq.smartHome.util.ThreadPool;
@@ -19,9 +17,7 @@ public class Been extends BaseGpio{
 		super(inputGpioName, outputGpioName);
 	}
 	
-	protected static Logger logger=Logger.getLogger(Been.class);
 	private static Been been; //Singleton 
-	private static boolean hasInit=false;//初始化是否成功
 	private static final String gpioName="gpio.been";//配置文件对映的名称
 	private static Future<?> beenfuture;//轰鸣器工作任務
 	//Singleton
@@ -29,10 +25,8 @@ public class Been extends BaseGpio{
 		if(null==been){
 			try {
 				been=new Been("",gpioName);
-				hasInit=true;
 			} catch (Exception e) {
 				logger.error("初始化轰鸣器失败", e);
-				hasInit=false;
 			}
 		}
 		return been;

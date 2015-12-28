@@ -15,6 +15,7 @@ import com.zaq.smartHome.pi4j.been.Been;
 import com.zaq.smartHome.pi4j.bodyInfrared.BodyInfrared;
 import com.zaq.smartHome.pi4j.csb.Csb;
 import com.zaq.smartHome.pi4j.diode.Diode;
+import com.zaq.smartHome.sound.AudioUtil;
 import com.zaq.smartHome.util.AppUtil;
 import com.zaq.smartHome.util.HttpPoolUtil;
 
@@ -40,6 +41,9 @@ public class RunMain extends SpringBootServletInitializer implements EmbeddedSer
 
 		HttpPoolUtil.init();//初始化http请求客户端连接池
 //		SpringApplication.run(RunMain.class);  运行WEB
+		
+		AudioUtil.playAppInit();//播放系统启动完成的语音提示
+		
 		while(true){
 			Thread.sleep(5000);
 		}

@@ -107,9 +107,9 @@ public class Player {
 	public static void playText(String text){
 		//先从数据库缓存中找相同ask的信息
 		YuYin yy=YuYinDB.getByTextAndUse(text);
-		
-		if(null!=yy){
-			Player.play(yy.getPath());
+		//存在语音且音频文件存在
+		if(null!=yy&&new File(yy.getPath()).exists()){
+			play(yy.getPath());
 			return;
 		}
 		

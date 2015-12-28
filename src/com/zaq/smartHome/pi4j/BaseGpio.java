@@ -1,5 +1,7 @@
 package com.zaq.smartHome.pi4j;
 
+import org.apache.log4j.Logger;
+
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.GpioPinDigitalInput;
@@ -10,8 +12,15 @@ import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.util.StringUtil;
 import com.zaq.smartHome.exception.GpioException;
 import com.zaq.smartHome.util.AppUtil;
-
+/**
+ * GPIO引脚操作的基类
+ * @author zaqzaq
+ * 2015年12月28日
+ *
+ */
 public class BaseGpio extends RaspiPin{
+	protected static Logger logger=Logger.getLogger(BaseGpio.class);
+	protected boolean hasInit=false;//初始化是否成功
 	protected GpioController gpio = GpioFactory.getInstance();
 	/**
 	 * 输入信号 需要监听
@@ -24,6 +33,7 @@ public class BaseGpio extends RaspiPin{
 	
 	protected BaseGpio(String inputGpioName,String outputGpioName) throws Exception{
 		if(StringUtil.isNullOrEmpty(inputGpioName)&&StringUtil.isNullOrEmpty(outputGpioName)){
+			hasInit=false;
 			throw new GpioException("初始化引脚不能为空");
 		}
 		if(StringUtil.isNotNullOrEmpty(inputGpioName)){
@@ -37,23 +47,43 @@ public class BaseGpio extends RaspiPin{
 		}else{
 			output=null;
 		}
+		hasInit=true;
 	}
+	
+	/**
+	 * 初始化输入引脚
+	 * @param inputGpioName 引脚的名称 见pi4j.properties
+	 * @return
+	 * @throws Exception
+	 */
 	protected GpioPinDigitalInput initInput(String inputGpioName) throws Exception{
 		
 		GpioPinDigitalInput digitalInput=gpio.provisionDigitalInputPin(getGpioPin(inputGpioName), PinPullResistance.PULL_DOWN);
 		digitalInput.setShutdownOptions(true);
 		return digitalInput;
 	}
+	/**
+	 * 初始化输出引脚
+	 * @param outputGpioName 引脚的名称 见pi4j.properties
+	 * @return
+	 * @throws Exception
+	 */
 	protected GpioPinDigitalOutput initOutput(String outputGpioName) throws Exception{
 		GpioPinDigitalOutput digitalOutput=gpio.provisionDigitalOutputPin(getGpioPin(outputGpioName));
 		digitalOutput.setShutdownOptions(true);
 		return digitalOutput;
 	}
 	
-	protected Pin getGpioPin(String gpioName)throws Exception{
+	/**
+	 * 通过引脚名称获取Pin 
+	 * @param gpioName 引脚的名称 见pi4j.properties
+	 * @return
+	 * @throws Exception
+	 */
+	private Pin getGpioPin(String gpioName)throws Exception{
 		Integer pinCode=Integer.valueOf(AppUtil.getPropertity(gpioName));
 		
-		if(pinCode<1||pinCode>29){
+		if(pinCode<0||pinCode>29){
 			throw new GpioException("引脚："+pinCode+"不存在");
 		}
 		

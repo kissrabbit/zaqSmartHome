@@ -35,7 +35,7 @@ public class RCSwitch {
 
     private final GpioPinDigitalOutput transmitterPin;
 
-    private final int pulseLength = 350; //443M 350 
+    private final int pulseLength = 350; 
     private final int repeatTransmit = 10;
 
     public RCSwitch(Pin transmitterPin) {

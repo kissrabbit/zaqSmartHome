@@ -18,10 +18,7 @@ public class Diode extends BaseGpio{
 	protected Diode(String inputGpioName, String outputGpioName) throws Exception {
 		super(inputGpioName, outputGpioName);
 	}
-	
-	protected static Logger logger=Logger.getLogger(Diode.class);
 	private static Diode diode; //Singleton 
-	private static boolean hasInit=false;//初始化是否成功
 	private static final String gpioName="gpio.diode";//配置文件对映的名称
 	private static Future<?> diodefuture;//发光二极管工作任務
 	//Singleton
@@ -29,10 +26,8 @@ public class Diode extends BaseGpio{
 		if(null==diode){
 			try {
 				diode=new Diode("",gpioName);
-				hasInit=true;
 			} catch (Exception e) {
 				logger.error("初始化发光二极管失败", e);
-				hasInit=false;
 			}
 		}
 		return diode;

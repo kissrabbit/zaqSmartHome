@@ -17,7 +17,6 @@ import com.zaq.smartHome.pi4j.been.Been;
 import com.zaq.smartHome.pi4j.diode.Diode;
 import com.zaq.smartHome.sound.AudioUtil;
 import com.zaq.smartHome.sound.Record;
-import com.zaq.smartHome.util.ThreadPool;
 
 /**
  * 超声波HC-SR04 模块控制 5V
@@ -29,10 +28,7 @@ public class Csb extends BaseGpio{
 	protected Csb(String inputGpioName, String outputGpioName) throws Exception {
 		super(inputGpioName, outputGpioName);
 	}
-	
-	protected static Logger logger=Logger.getLogger(Csb.class);
 	private static Csb csb; //Singleton 
-	private static boolean hasInit=false;//初始化是否成功
 	private static final String outGpioName="gpio.csb.send";//配置文件对映的名称 trig（控制端）
 	private static final String inGpioName="gpio.csb.rec";//配置文件对映的名称  echo（接收端）
 	private static Executor executor;//测距的线程
@@ -50,10 +46,9 @@ public class Csb extends BaseGpio{
 				executor=Executors.newSingleThreadExecutor();
 				executorRecord=Executors.newSingleThreadExecutor();
 				executorRun=Executors.newSingleThreadExecutor();
-				hasInit=true;
 			} catch (Exception e) {
 				logger.error("初始化超声波失败", e);
-				hasInit=false;
+				csb.hasInit=false;
 			}
 		}
 		return csb;
@@ -72,7 +67,7 @@ public class Csb extends BaseGpio{
 					while(runFlag) {
 			        	
 			        	float  distance=checkdist();
-//			        	System.out.println("超声波检测距离："+distance+"m");
+			        	logger.debug("超声波检测距离："+distance+"m");
 			        	if(distance==0){
 			        		Been.initOrGet().runSlowDuration(1000);
 			        	}else if(distance<0.49){

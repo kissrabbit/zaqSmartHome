@@ -4,6 +4,7 @@ import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
 
+import com.zaq.smartHome.db.LogCmdDB;
 import com.zaq.smartHome.db.bean.Cmd;
 
 public abstract class BaseCmd {
@@ -41,7 +42,8 @@ public abstract class BaseCmd {
 	 */
 	public void beforExec(){
 		logger.info("开始执行命令:"+command.getCmd());
-		//TODO  记录Cmd_log 日志到数据库
+		//记录Cmd_log 日志到数据库
+		LogCmdDB.add(+command.getId());
 	}
 	/**
 	 * 指令具体操作
