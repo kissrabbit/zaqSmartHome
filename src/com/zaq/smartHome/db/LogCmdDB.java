@@ -5,7 +5,6 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 
-import com.zaq.smartHome.db.bean.YuYin;
 import com.zaq.smartHome.util.BaseDao;
 
 /**

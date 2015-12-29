@@ -2,7 +2,9 @@ package com.zaq.smartHome;
 
 import java.io.IOException;
 
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.context.embedded.ErrorPage;
@@ -25,28 +27,24 @@ import com.zaq.smartHome.util.HttpPoolUtil;
  * 2015年12月5日
  *
  */
-@Configuration  
-@ComponentScan  
-@EnableAutoConfiguration 
+@SpringBootApplication 
 public class RunMain extends SpringBootServletInitializer implements EmbeddedServletContainerCustomizer{
 	
 	public static void main(String[] args) throws IOException, InterruptedException {
 		AppUtil.init();
-		
-		//初始化硬件设备
 		Csb.initOrGet();//初始化超声波检测
 		Been.initOrGet();//初始化轰鸣器
 		Diode.initOrGet();//初始化发光二极管
 		BodyInfrared.initOrGet().listener();//初始化并监听人体红外设备
 
 		HttpPoolUtil.init();//初始化http请求客户端连接池
-//		SpringApplication.run(RunMain.class);  运行WEB
+		SpringApplication.run(RunMain.class);  //运行WEB
 		
 		AudioUtil.playAppInit();//播放系统启动完成的语音提示
 		
-		while(true){
-			Thread.sleep(5000);
-		}
+//		while(true){
+//			Thread.sleep(5000);
+//		}
 	}
 
 	@Override

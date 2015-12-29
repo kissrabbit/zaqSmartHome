@@ -1,27 +1,24 @@
-package com.zaq.smartHome.ws;
-
-import java.util.WeakHashMap;
+package com.zaq.smartHome.ws.httpHandle;
 
 import org.apache.log4j.Logger;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.zaq.smartHome.controll.BaseCmd;
 import com.zaq.smartHome.controll.CmdFactory;
-import com.zaq.smartHome.controll.command.RF315Cmd;
-import com.zaq.smartHome.controll.command.RF433Cmd;
-import com.zaq.smartHome.controll.command.RedCmd;
 import com.zaq.smartHome.db.CmdDB;
 import com.zaq.smartHome.db.bean.Cmd;
-import com.zaq.smartHome.exception.CmdNotFoundException;
-import com.zaq.smartHome.util.Constant;
 
 @RestController  
 @RequestMapping("/admin/command")
+/**
+ * 指令的http请求
+ * @author zaqzaq
+ * 2015年12月29日
+ *
+ */
 public class HttpCommand {
 	private static Logger logger=Logger.getLogger(HttpCommand.class);
-	private static WeakHashMap<Long, Cmd> cmdCache=new WeakHashMap<>();
 	
 	@RequestMapping("/{id}/{delay}")  
 	/**
@@ -33,19 +30,17 @@ public class HttpCommand {
     public boolean exec(@PathVariable("id") Long id,@PathVariable("delay")Integer delay) {  
 		Cmd cmd=CmdDB.getByID(id);
 		
-		if(null!=cmd){
-			cmdCache.put(id, cmd);
-		}
-		System.out.println(id);
-		
-		BaseCmd baseCmd=null;
-		try {
-			baseCmd = CmdFactory.newCommand(cmd, delay);
-		} catch (CmdNotFoundException e) {
+		if(null==cmd){
+			logger.error("指令["+id+"]不存在");
 			return false;
 		}
 		
-		baseCmd.run();
+		try {
+			CmdFactory.newCommand(cmd, delay).run();
+		} catch (Exception e) {
+			logger.error("执行指令["+id+"]异常", e);
+			return false;
+		}
 		
         return true;  
     }  

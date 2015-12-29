@@ -20,7 +20,7 @@ public class RF433Cmd extends BaseCmd{
 	}
 	@Override
 	protected void exec() {
-		
+		//发送无线指令码
 		RF433.initOrGet().send(Integer.valueOf(getCommand().getCode()),
 								RF433Protocol.getById(getCommand().getWirelessProtocol().intValue()));
 	}
