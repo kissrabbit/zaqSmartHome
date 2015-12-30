@@ -39,12 +39,14 @@ public class TTSutil {
      * @throws Exception
      */
     private static byte[] done(String tex) throws Exception {
-        return HttpPoolUtil.postRetMulti(API_URI, new BasicNameValuePair("tex", tex)
+    	logger.debug("请求语合成:"+tex);
+    	byte[] retVytes=HttpPoolUtil.postRetMulti(API_URI, new BasicNameValuePair("tex", tex)
 								        , new BasicNameValuePair("cuid", AppUtil.getPropertity("cuid"))
 								        , new BasicNameValuePair("tok", BDUtil.getToken())
 								        , new BasicNameValuePair("lan", "zh")
 								        , new BasicNameValuePair("ctp", "1"));
-        
+    	logger.debug("请求语合成成功:"+tex);
+        return retVytes;
     }
     /**
      * 将文字转换成音频文件后 运行 exec线程 

@@ -141,7 +141,7 @@ public class Player {
 	 * 用mplayer 软件播放音频
 	 * @param toFilePath 音频路径
 	 */
-	public synchronized static void play(final String toFilePath) {
+	public static void play(final String toFilePath) {
 		ThreadPool.execute(new Runnable() {
 			
 			@Override
@@ -152,7 +152,11 @@ public class Player {
 				try {
 					
 					logger.info("mplayer开始播放音频:"+commands);
-					process = Runtime.getRuntime().exec(commands);
+					//一次只播放一个
+					synchronized(Player.class){
+						process = Runtime.getRuntime().exec(commands);
+					}
+					
 					logger.info("mplayer结束播放音频:"+commands);
 					ir = new InputStreamReader(process.getInputStream());
 					BufferedReader input = new BufferedReader(ir);

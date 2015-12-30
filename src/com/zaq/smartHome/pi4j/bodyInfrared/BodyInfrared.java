@@ -5,8 +5,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
-
 import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import com.zaq.smartHome.pi4j.BaseGpio;
@@ -78,14 +76,14 @@ public class BodyInfrared extends BaseGpio{
 			Diode.initOrGet().runFastDuration(2000);
 		}
 		
-		//延迟1分钟关闭超声波
+		//检测不到人时延迟30秒关闭超声波
 		taskFuture=executor.schedule(new Runnable() {
 			@Override
 			public void run() {
 				Csb.initOrGet().stop();
 //				Been.init().runFastDuration(2000); 注掉，如果轰鸣会被红外检测到有人。。。。无语
 			}
-		}, 1, TimeUnit.MINUTES);
+		}, 30, TimeUnit.SECONDS);
 		
 	}
 	/**

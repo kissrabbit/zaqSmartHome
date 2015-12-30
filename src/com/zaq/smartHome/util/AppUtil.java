@@ -33,6 +33,7 @@ public class AppUtil {
 		InputStream isConfigPi4j = new BufferedInputStream(AppUtil.class.getClassLoader().getResourceAsStream(configPi4j));
 		props.load(isConfigPi4j);
 		
+		DbHelper.init();//初始化数据源
 		ParseUtil.init();//初始化模式解析工具
 	}
 

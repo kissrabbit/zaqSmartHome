@@ -15,6 +15,25 @@ public class BDUtil {
 	private static Logger logger=Logger.getLogger(BDUtil.class);
 	private static String TOK=null;
 	private static Timer timer=new Timer();
+	
+	/**
+	 * 初始化百度API
+	 */
+	public static void init(){
+		ThreadPool.execute(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					getToken();
+					logger.info("初始化百度API成功：TOK="+TOK);
+				} catch (Exception e) {
+					logger.error("初始化百度API失败", e);
+				}
+			}
+		});
+	}
+	
 	/**
 	 * 获取 Token
 	 * @return

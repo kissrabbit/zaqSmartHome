@@ -11,13 +11,24 @@ import org.apache.commons.dbutils.BeanProcessor;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.log4j.Logger;
 
-
+/**
+ * DBUtil的工具类
+ * @author zaqzaq
+ * 2015年12月30日
+ *
+ */
 public class DbHelper {
 	private static Logger logger=Logger.getLogger(DbHelper.class);
 	private static boolean hasFULL=false;//数据库连接池是否爆掉
     private static DataSource dataSource;
     private static BeanProcessor processor=new BeanProcessor();
     private DbHelper(){
+    }
+    /**
+     * 初始化数据源
+     */
+    public  static void init(){
+    	newDataSource();
     }
     
     public static <T> T toBean(ResultSet resultSet,Class<T> c) throws SQLException{
@@ -72,7 +83,7 @@ public class DbHelper {
 	        dbcpDataSource.setMinEvictableIdleTimeMillis(Integer.valueOf(AppUtil.getPropertity("dbcp.MinEvictableIdleTimeMillis")));
 	        dbcpDataSource.setTimeBetweenEvictionRunsMillis(Integer.valueOf(AppUtil.getPropertity("dbcp.TimeBetweenEvictionRunsMillis")));
 	        dataSource=dbcpDataSource;
-	        logger.info("Initialize dbcp...success.......");
+	        logger.info("初始化数据源...success.......");
     	 }
         return dataSource;
     }

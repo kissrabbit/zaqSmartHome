@@ -8,8 +8,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.sound.sampled.LineUnavailableException;
 
-import org.apache.log4j.Logger;
-
 import com.zaq.smartHome.exception.ResRuningException;
 import com.zaq.smartHome.exception.SystemException;
 import com.zaq.smartHome.pi4j.BaseGpio;
@@ -28,6 +26,7 @@ public class Csb extends BaseGpio{
 	protected Csb(String inputGpioName, String outputGpioName) throws Exception {
 		super(inputGpioName, outputGpioName);
 	}
+	private static final int CHECK_COUNT=1;//检测到了两次再做出回应，防止超时波的误差
 	private static Csb csb; //Singleton 
 	private static final String outGpioName="gpio.csb.send";//配置文件对映的名称 trig（控制端）
 	private static final String inGpioName="gpio.csb.rec";//配置文件对映的名称  echo（接收端）
@@ -59,7 +58,7 @@ public class Csb extends BaseGpio{
 	public void run(){
 		if(hasInit){
 			executorRun.execute(new Runnable() {
-				
+				int chechCount=CHECK_COUNT;//检测到二次刚录音，防止超时波的误差
 				@Override
 				public void run() {
 
@@ -68,11 +67,15 @@ public class Csb extends BaseGpio{
 			        	
 			        	float  distance=checkdist();
 			        	logger.debug("超声波检测距离："+distance+"m");
+			        	
 			        	if(distance==0){
 			        		Been.initOrGet().runSlowDuration(1000);
+			        	//0.49m可以打开录音机	
 			        	}else if(distance<0.49){
-			        		if(STAT!=2){
+			        		if(STAT!=2&&chechCount==0){
+			        			chechCount=CHECK_COUNT;
 			        			//打开录音机
+			        			Diode.initOrGet().runFastDuration(1000);
 			        			executorRecord.execute(new Runnable() {
 									
 									@Override
@@ -87,9 +90,12 @@ public class Csb extends BaseGpio{
 										}
 									}
 								});
+			        			STAT=2;
+			        		}else{
+			        			chechCount--;
 			        		}
-			        		STAT=2;
 			        	}else if(distance<0.99){
+			        		chechCount=CHECK_COUNT;
 			        		if(STAT!=1){
 			        			//关闭录音机
 			        			finishRecord();
@@ -98,6 +104,7 @@ public class Csb extends BaseGpio{
 			        		}
 			        		STAT=1;
 			        	}else {
+			        		chechCount=CHECK_COUNT;
 			        		if(STAT!=0){
 			        			//关闭录音机
 			        			finishRecord();
@@ -105,8 +112,8 @@ public class Csb extends BaseGpio{
 			        		STAT=0;
 						}
 			        	
-			            try {
-							Thread.sleep(800);
+		        	    try {
+							Thread.sleep(chechCount==CHECK_COUNT?800:100);
 						} catch (InterruptedException e) {}
 			        }
 				

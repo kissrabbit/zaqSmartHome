@@ -24,9 +24,10 @@ public class QAxiaoDu extends BaseQA {
 	
 	@Override
 	public String askRemote(String question) {
+		logger.debug("请求问题："+question);
 		String httpRes=HttpPoolUtil.getRetStr(AppUtil.getXDUri(),new BasicHeader("Cookie", AppUtil.getXDCookie()), 
 				new BasicNameValuePair("request_query", question));
-			logger.debug("问题："+question+"\r\n返回："+httpRes);
+		logger.debug("问题："+question+"\r\n返回："+httpRes);
 		//		return new JSONObject(httpRes).getJSONArray("result_list").getJSONObject(0).getJSONObject("result_content").getString("answer");
 		String ask=new JSONObject(new JSONObject(httpRes).getJSONArray("result_list").getJSONObject(0).get("result_content").toString()).getString("answer");
 		return ask.replaceAll("小度", "那B小心").replaceAll("百度", "果果");

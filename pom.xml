@@ -206,7 +206,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>com.zaq.smartHome.sound.AudioUtil</mainClass>
+							<mainClass>com.zaq.smartHome.RunMain</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

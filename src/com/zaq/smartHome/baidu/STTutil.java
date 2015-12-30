@@ -65,7 +65,7 @@ public class STTutil {
 		return done(soundByte,"wav");
 	}
 	public static String done(byte[] soundByte,String fileFormat) throws Exception {
-		
+		logger.debug("请求语识别");
 		ByteArrayEntity byteArrayEntity=new ByteArrayEntity(soundByte);
 		String httpRes=HttpPoolUtil.postRetStr(API_URI + "?cuid=" + AppUtil.getPropertity("cuid") + "&token=" + BDUtil.getToken(), 
 												new BasicHeader("Content-Type", "audio/"+fileFormat+"; rate=8000"),byteArrayEntity);
