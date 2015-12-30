@@ -35,16 +35,14 @@ public class RunMain extends SpringBootServletInitializer implements EmbeddedSer
 	public static void main(String[] args) throws IOException, InterruptedException {
 		AppUtil.init();//系统环境初始化
 		
-		BDUtil.init();//初始化百度API
-		
 		Csb.initOrGet();//初始化超声波检测
 		Been.initOrGet();//初始化轰鸣器
 		Diode.initOrGet();//初始化发光二极管
 
-		HttpPoolUtil.init();//初始化http请求客户端连接池
 		SpringApplication.run(RunMain.class);  //运行WEB
 		
 		BodyInfrared.initOrGet().listener();//初始化并监听人体红外设备
+		
 		AudioUtil.playAppInit();//播放系统启动完成的语音提示
 		
 	}

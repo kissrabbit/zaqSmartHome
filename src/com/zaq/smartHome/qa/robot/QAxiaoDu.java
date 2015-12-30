@@ -39,11 +39,18 @@ public class QAxiaoDu extends BaseQA {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+		long start=System.currentTimeMillis();
+		HttpPoolUtil.getClientByPool();
+		System.out.println("cost1:"+ (System.currentTimeMillis()-start));
+		start=System.currentTimeMillis();
+		HttpPoolUtil.getClientByPool();
+		System.out.println("cost2:"+ (System.currentTimeMillis()-start));
 		String re=HttpPoolUtil.getRetStr(AppUtil.getXDUri(),new BasicHeader("Cookie", AppUtil.getXDCookie()), 
 					new BasicNameValuePair("request_query", "你是谁，")
 //					new BasicNameValuePair("request_query", "苏州后天的天气")
 		);
+		
+		
 		System.out.println(re);
 		System.out.println(new JSONObject(re).getJSONArray("result_list").getJSONObject(0).get("result_content"));
 		System.out.println(new JSONObject(new JSONObject(re).getJSONArray("result_list").getJSONObject(0).get("result_content").toString()).getString("answer"));

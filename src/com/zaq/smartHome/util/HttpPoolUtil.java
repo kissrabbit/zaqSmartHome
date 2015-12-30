@@ -35,6 +35,7 @@ import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeader;
@@ -56,8 +57,7 @@ import com.zaq.smartHome.exception.HttpRequestException;
  */
 public class HttpPoolUtil {
 	private static Logger  logger=Logger.getLogger(HttpPoolUtil.class);
-	private static PoolingHttpClientConnectionManager cm;
-	private static HttpRequestRetryHandler httpRequestRetryHandler;
+	private static HttpClientBuilder httpClientBuilder; 
 	/**
 	 * 连接池配置
 	 */
@@ -84,7 +84,7 @@ public class HttpPoolUtil {
 	            .register("https", sslsf)
 	            .build();
 	    
-	    cm = new PoolingHttpClientConnectionManager(registry);
+	    PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(registry);
 	    // 将最大连接数增加到http.pool.maxTotal
 	    cm.setMaxTotal(AppUtil.getPropertity("http.pool.maxTotal",200));
 	    // 将每个路由基础的连接增加到http.pool.MaxPerRoute
@@ -93,7 +93,7 @@ public class HttpPoolUtil {
 	//        HttpHost localhost = new HttpHost("http://www.baidu.com",80);
 	//        cm.setMaxPerRoute(new HttpRoute(localhost), 50);
 	  //请求重试处理
-	    httpRequestRetryHandler = new HttpRequestRetryHandler() {
+	    HttpRequestRetryHandler httpRequestRetryHandler = new HttpRequestRetryHandler() {
 	        public boolean retryRequest(IOException exception,int executionCount, HttpContext context) {
 	            if (executionCount >= AppUtil.getMaxError()) {// 如果已经重试了maxError次，就放弃                    
 	                return false;
@@ -126,6 +126,16 @@ public class HttpPoolUtil {
 	            return false;
 	        }
 	    };  
+	    
+	    RequestConfig  defaultRequestConfig = RequestConfig.custom()
+  			  .setSocketTimeout(AppUtil.getReadTimeOut())
+  			  .setConnectTimeout(AppUtil.getConnTimeOut())
+  			  .setConnectionRequestTimeout(5000)
+  			  .build();
+	    httpClientBuilder=HttpClients.custom().setDefaultRequestConfig(defaultRequestConfig)
+                .setConnectionManager(cm)
+                .setUserAgent(AppUtil.getPropertity("http.useragent"))
+                .setRetryHandler(httpRequestRetryHandler);
     }
 	/**
 	 * 组装http请求
@@ -272,18 +282,8 @@ public class HttpPoolUtil {
 	 * @return
 	 */
     public static CloseableHttpClient getClientByPool() {   
-    	RequestConfig defaultRequestConfig = RequestConfig.custom()
-    			  .setSocketTimeout(AppUtil.getReadTimeOut())
-    			  .setConnectTimeout(AppUtil.getConnTimeOut())
-    			  .setConnectionRequestTimeout(5000)
-    			  .build();
-    	
          
-        return HttpClients.custom().setDefaultRequestConfig(defaultRequestConfig)
-                .setConnectionManager(cm)
-                .setUserAgent(AppUtil.getPropertity("http.useragent"))
-                .setRetryHandler(httpRequestRetryHandler)
-                .build();
+        return httpClientBuilder.build();
     }  
 	
 	public static void main(String[] args) {

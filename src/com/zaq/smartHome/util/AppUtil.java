@@ -35,6 +35,8 @@ public class AppUtil {
 		
 		DbHelper.init();//初始化数据源
 		ParseUtil.init();//初始化模式解析工具
+		HttpPoolUtil.init();//初始化http请求客户端连接池
+		BDUtil.init();//初始化百度API
 	}
 
 	public static String getPropertity(String string) {
