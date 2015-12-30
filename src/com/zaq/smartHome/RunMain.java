@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration;
 import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.context.embedded.ErrorPage;
@@ -12,6 +13,7 @@ import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import com.zaq.smartHome.pi4j.been.Been;
 import com.zaq.smartHome.pi4j.bodyInfrared.BodyInfrared;
@@ -27,20 +29,23 @@ import com.zaq.smartHome.util.HttpPoolUtil;
  * 2015年12月5日
  *
  */
-@SpringBootApplication 
+@SpringBootApplication(scanBasePackages="com.zaq.smartHome.ws",exclude=FreeMarkerAutoConfiguration.class)
+//@Configuration  
+//@ComponentScan(basePackages="com.zaq.smartHome.ws")
+//@EnableAutoConfiguration(exclude=FreeMarkerAutoConfiguration.class)
 public class RunMain extends SpringBootServletInitializer implements EmbeddedServletContainerCustomizer{
 	
 	public static void main(String[] args) throws IOException, InterruptedException {
-		AppUtil.init();
-		Csb.initOrGet();//初始化超声波检测
-		Been.initOrGet();//初始化轰鸣器
-		Diode.initOrGet();//初始化发光二极管
-		BodyInfrared.initOrGet().listener();//初始化并监听人体红外设备
-
-		HttpPoolUtil.init();//初始化http请求客户端连接池
+//		AppUtil.init();
+//		Csb.initOrGet();//初始化超声波检测
+//		Been.initOrGet();//初始化轰鸣器
+//		Diode.initOrGet();//初始化发光二极管
+//		BodyInfrared.initOrGet().listener();//初始化并监听人体红外设备
+//
+//		HttpPoolUtil.init();//初始化http请求客户端连接池
 		SpringApplication.run(RunMain.class);  //运行WEB
 		
-		AudioUtil.playAppInit();//播放系统启动完成的语音提示
+//		AudioUtil.playAppInit();//播放系统启动完成的语音提示
 		
 //		while(true){
 //			Thread.sleep(5000);

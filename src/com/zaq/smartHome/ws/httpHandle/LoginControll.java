@@ -5,6 +5,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+/**
+ * 登陆请求处理
+ * @author zaqzaq
+ * 2015年12月30日
+ *
+ */
 @RestController  
 public class LoginControll {
 	@RequestMapping("/")
@@ -16,8 +22,9 @@ public class LoginControll {
 	}
 	
 	@RequestMapping("/test")
+//	@RequestMapping(value="/test",produces = {"application/json;charset=UTF-8"})
 	@ResponseBody
 	public String test(){
-		return "aassa枯萎b";
+		return "freshz*果 果*";
 	}
 }
