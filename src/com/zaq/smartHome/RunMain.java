@@ -2,6 +2,7 @@ package com.zaq.smartHome;
 
 import java.io.IOException;
 
+import org.apache.shiro.authz.AuthorizationException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration;
@@ -51,7 +52,12 @@ public class RunMain extends SpringBootServletInitializer implements EmbeddedSer
 		container.setContextPath("");  
         container.setPort(8081);  
         container.setSessionTimeout(30);  
-        //错误页面配置
+        
+        //XXX 错误页面配置
+        //未验证就访问页面后错误跳转
+        container.addErrorPages(new ErrorPage(AuthorizationException.class, "/")); 
         container.addErrorPages(new ErrorPage(HttpStatus.BAD_REQUEST, "/screen/error")); 
+        container.addErrorPages(new ErrorPage(HttpStatus.INTERNAL_SERVER_ERROR, "/screen/error")); 
+        
 	}
 }

@@ -3,10 +3,7 @@ package com.zaq.smartHome.db;
 import java.sql.SQLException;
 import java.util.WeakHashMap;
 
-import org.apache.log4j.Logger;
-
 import com.zaq.smartHome.db.bean.Cmd;
-import com.zaq.smartHome.util.BaseDao;
 
 /**
  * 对指令的  DB操作
@@ -14,8 +11,7 @@ import com.zaq.smartHome.util.BaseDao;
  * 2015年12月14日
  *
  */
-public class CmdDB {
-	private static Logger logger=Logger.getLogger(CmdDB.class);
+public class CmdDB  extends BaseDB{
 	private static String getByPY="select * from cmd where py=? and isDel=0";
 	private static String getByID="select * from cmd where id=? and isDel=0";
 	/**
@@ -33,12 +29,12 @@ public class CmdDB {
 		}
 		Cmd cmd=null;;
 		try {
-			cmd = BaseDao.getInstance().queryForObject(Cmd.class, getByPY, py);
+			cmd = dao.queryForObject(Cmd.class, getByPY, py);
 			if(null!=cmd){
 				cmdCache.put(py, cmd);
 				cmdCache.put(cmd.getId().toString(), cmd);
 				if(null!=cmd.getAutoDelayExecId()){
-					cmd.setAutoDelayExecCmd(BaseDao.getInstance().queryForObject(Cmd.class, getByID, cmd.getAutoDelayExecId()));
+					cmd.setAutoDelayExecCmd(dao.queryForObject(Cmd.class, getByID, cmd.getAutoDelayExecId()));
 
 				}
 			}
@@ -60,13 +56,13 @@ public class CmdDB {
 		}
 		Cmd cmd=null;
 		try {
-			cmd = BaseDao.getInstance().queryForObject(Cmd.class, getByID, id);
+			cmd = dao.queryForObject(Cmd.class, getByID, id);
 			
 			if(null!=cmd){
 				cmdCache.put(id.toString(), cmd);
 				cmdCache.put(cmd.getPy(), cmd);
 				if(null!=cmd.getAutoDelayExecId()){
-					cmd.setAutoDelayExecCmd(BaseDao.getInstance().queryForObject(Cmd.class, getByID, cmd.getAutoDelayExecId()));
+					cmd.setAutoDelayExecCmd(dao.queryForObject(Cmd.class, getByID, cmd.getAutoDelayExecId()));
 
 				}
 			}

@@ -8,8 +8,11 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeansException;
 import org.springframework.boot.ApplicationPid;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -35,9 +38,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @Configuration
 @EnableWebMvc
-public class WebConfig extends WebMvcConfigurerAdapter  {
+public class WebConfig extends WebMvcConfigurerAdapter  implements ApplicationContextAware{
 	private Logger logger=Logger.getLogger(WebConfig.class);
+	private static ApplicationContext applicationContext=null;
 	
+	/**
+	 * 获取Spring 注入的bean
+	 * @param className
+	 * @return
+	 */
+	public static Object getBean(String className){
+		return applicationContext.getBean(className);
+	}
 	/**
 	 * 扩展filter
 	 */
@@ -121,6 +133,14 @@ public class WebConfig extends WebMvcConfigurerAdapter  {
 		converters.add(customJackson2HttpMessageConverter());
 		converters.add(stringHttpMessageConverter());
 		super.extendMessageConverters(converters);
+	}
+	
+	/**
+	 * 注入ApplicationContext
+	 */
+	@Override
+	public void setApplicationContext(ApplicationContext context) throws BeansException {
+		applicationContext=context;
 	}
 	
 	/**解决 返回JSON 中文乱码

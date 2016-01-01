@@ -3,10 +3,7 @@ package com.zaq.smartHome.db;
 import java.sql.SQLException;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
-
 import com.zaq.smartHome.db.bean.YuYin;
-import com.zaq.smartHome.util.BaseDao;
 
 /**
  * 语音缓存库
@@ -14,8 +11,7 @@ import com.zaq.smartHome.util.BaseDao;
  * 2015年12月21日
  *
  */
-public class YuYinDB {
-	private static Logger logger=Logger.getLogger(YuYinDB.class);
+public class YuYinDB extends BaseDB{
 	private final static String getByText="select * from yuyin where text=? and isDel=0";
 	private final static String useOne="update yuyin set useTimes=useTimes+1 where text=?";
 	private final static String reUse="update yuyin set useTimes=useTimes+1,isDel=0  where text=?";
@@ -28,7 +24,7 @@ public class YuYinDB {
 	public static YuYin getByText(String text){
 		YuYin yuYin=null;;
 		try {
-			yuYin = BaseDao.getInstance().queryForObject(YuYin.class, getByText, text);
+			yuYin = dao.queryForObject(YuYin.class, getByText, text);
 		} catch (SQLException e) {
 			logger.error("按文本"+text+"查询语音缓存库失败", e);
 		}
@@ -41,7 +37,7 @@ public class YuYinDB {
 	 */
 	public static void useOne(String text){
 		try {
-			BaseDao.getInstance().update(useOne, text);
+			dao.update(useOne, text);
 		} catch (SQLException e) {
 			logger.error("使用一次语音缓存库更新失败", e);
 		}
@@ -58,13 +54,13 @@ public class YuYinDB {
 		
 		if(null==yy){
 			try {
-				BaseDao.getInstance().storeInfo(addSql,path,text,new Date());
+				dao.storeInfo(addSql,path,text,new Date());
 			} catch (SQLException e) {
 				logger.error("添加语音缓存库失败", e);
 			}
 		}else{
 			try {
-				BaseDao.getInstance().update(reUse, text);
+				dao.update(reUse, text);
 			} catch (SQLException e) {
 				logger.error("重新使用语音缓存库失败", e);
 			}
