@@ -88,6 +88,9 @@ public abstract class BaseCmd {
 	 * 指令执行后的操作
 	 */
 	public void afterExec(){
+		//清除延时队列中的相同指令
+		CmdDelayTaskCollection.delDelayTask(command.getCode(), command.getType());
+		
 		logger.info("执行完成命令:"+command.getCmd());
 	}
 }
