@@ -1,10 +1,14 @@
 package com.zaq.smartHome.ws;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+import org.springframework.boot.ApplicationPid;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +36,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Configuration
 @EnableWebMvc
 public class WebConfig extends WebMvcConfigurerAdapter  {
+	private Logger logger=Logger.getLogger(WebConfig.class);
 	
 	/**
 	 * 扩展filter
@@ -54,7 +59,22 @@ public class WebConfig extends WebMvcConfigurerAdapter  {
 		CharacterEncodingFilter characterEncodingFilter=new CharacterEncodingFilter("utf-8", true);
 		return characterEncodingFilter;
 	}
-
+	
+	/**
+	 * 输入主程的PID
+	 * @return
+	 */
+	@Bean
+	public ApplicationPid applicationPid(){
+		ApplicationPid applicationPid=new ApplicationPid();
+		try {
+			applicationPid.write(new File("pid"));
+		} catch (IOException e) {
+			logger.warn("pid文件输出失败", e);
+		}
+		return applicationPid;
+	}
+	
 	/***
 	 * 整合freemarket
 	 */
