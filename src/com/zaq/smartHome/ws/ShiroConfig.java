@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ShiroConfig {
 	
-	@Bean
+	@Bean(name="securityManager")
 	public DefaultWebSecurityManager securityManager(){
 		DefaultWebSecurityManager defaultWebSecurityManager=new DefaultWebSecurityManager(new MyRealm());
 		return defaultWebSecurityManager;

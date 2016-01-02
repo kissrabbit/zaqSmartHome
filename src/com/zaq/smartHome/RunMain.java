@@ -55,9 +55,10 @@ public class RunMain extends SpringBootServletInitializer implements EmbeddedSer
         
         //XXX 错误页面配置
         //未验证就访问页面后错误跳转
-        container.addErrorPages(new ErrorPage(AuthorizationException.class, "/")); 
+        container.addErrorPages(new ErrorPage(AuthorizationException.class, "/screen/noAuth")); 
         container.addErrorPages(new ErrorPage(HttpStatus.BAD_REQUEST, "/screen/error")); 
         container.addErrorPages(new ErrorPage(HttpStatus.INTERNAL_SERVER_ERROR, "/screen/error")); 
-        
+        container.addErrorPages(new ErrorPage(HttpStatus.METHOD_NOT_ALLOWED, "/screen/error")); 
+        container.addErrorPages(new ErrorPage(HttpStatus.NOT_FOUND,"/screen/notFound"));
 	}
 }

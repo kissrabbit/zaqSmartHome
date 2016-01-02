@@ -4,11 +4,11 @@ import java.io.Serializable;
 
 public class User  implements Serializable{
 	private static final long serialVersionUID = 1L;
-	
+	public static final Short MANAGER=0;
 	private Long id;
 	private String username;
 	private String password;
-	private Short type;
+	private Short type;//0 :管理员
 	
 	
 	public Long getId() {

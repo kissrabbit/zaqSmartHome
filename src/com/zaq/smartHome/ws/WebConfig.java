@@ -58,10 +58,9 @@ public class WebConfig extends WebMvcConfigurerAdapter  implements ApplicationCo
 		FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
 		filterRegistrationBean.setFilter(filter);
 		filterRegistrationBean.setEnabled(true);
-		filterRegistrationBean.addUrlPatterns("/admin");
+		filterRegistrationBean.addUrlPatterns("/admin/*");
 		return filterRegistrationBean;
 	}
-	
 	/**
 	 * 编码过滤器
 	 * @return
@@ -121,7 +120,8 @@ public class WebConfig extends WebMvcConfigurerAdapter  implements ApplicationCo
 	 */
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("/**").addResourceLocations("/");
+		registry.addResourceHandler("/**").addResourceLocations("classpath:/");
+		super.addResourceHandlers(registry);
 	}
 	
 	

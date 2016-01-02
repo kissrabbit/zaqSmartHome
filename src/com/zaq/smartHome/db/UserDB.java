@@ -3,7 +3,6 @@ package com.zaq.smartHome.db;
 import java.sql.SQLException;
 
 import com.zaq.smartHome.db.bean.User;
-import com.zaq.smartHome.db.bean.YuYin;
 
 /**
  * 用户DB操作

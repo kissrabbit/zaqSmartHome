@@ -6,6 +6,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
@@ -30,6 +31,15 @@ public class MyRealm extends AuthorizingRealm {
 //             return authenticationInfo;
 //         }
     	//暂时不需要角色分配
+    	
+    	User user= (User) principals.getPrimaryPrincipal();
+    	
+    	if(user.getType().shortValue()==User.MANAGER){
+    		SimpleAuthorizationInfo authenticationInfo = new SimpleAuthorizationInfo();
+    		authenticationInfo.addRole("ROLE_ADMIN");
+    		return authenticationInfo;
+    	}
+    	
         return null;  
     }  
    
