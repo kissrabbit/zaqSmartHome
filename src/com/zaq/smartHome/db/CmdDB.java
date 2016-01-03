@@ -12,12 +12,28 @@ import com.zaq.smartHome.db.bean.Cmd;
  *
  */
 public class CmdDB  extends BaseDB{
-	private static String getByPY="select * from cmd where py=? and isDel=0";
-	private static String getByID="select * from cmd where id=? and isDel=0";
+	private static final String getByPY="select * from cmd where py=? and isDel=0";
+	private static final String getByID="select * from cmd where id=? and isDel=0";
+	private static final String countCmd="select count(0) from cmd where isDel=?";
 	/**
 	 * 缓存下指令
 	 */
 	private static WeakHashMap<String, Cmd> cmdCache=new WeakHashMap<>();
+	
+	/**
+	 * 统计指令数
+	 * @param isDel
+	 * @return
+	 */
+	public static int countCmd(Short isDel){
+		int count=0;
+		try {
+			count=dao.count(countCmd,isDel);
+		} catch (SQLException e) {
+			logger.error("统计指令数失败isDel:"+isDel, e);
+		}
+		return count;
+	}
 	/**
 	 * 按拼音查询指令
 	 * @param py 全拼

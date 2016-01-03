@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.zaq.smartHome.util.Constant;
+
 /**
  * 系统默认跳转
  * @author zaqzaq
@@ -24,7 +26,7 @@ public class ScreenController extends BaseController{
 	@RequestMapping("/noAuth")
 	public ModelAndView noAuth(ModelAndView modelAndView,HttpServletRequest request){
 		
-		if("auth".equals(request.getSession().getAttribute("isAuth"))){
+		if(null!=request.getSession().getAttribute(Constant.IS_AUTH)){
 			modelAndView.setViewName("redirect:/resources/403.html");
 		}else{
 			modelAndView.setViewName("redirect:/");

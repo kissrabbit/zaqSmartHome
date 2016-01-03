@@ -11,12 +11,18 @@ public abstract class BaseCmd {
 	private static Logger logger=Logger.getLogger(BaseCmd.class);
 	private Cmd command;//发射的设备码
 	private Integer delay;//延時 delay秒后執行关闭操作
+	private Long userCreate;
 	public BaseCmd(Cmd cmd){
 		this.command=cmd;
 	}
 	public BaseCmd(Cmd cmd,Integer delay){
 		this.command=cmd;
 		this.delay=delay;
+	}
+	public BaseCmd(Cmd cmd,Integer delay,Long userCreate){
+		this.command=cmd;
+		this.delay=delay;
+		this.userCreate=userCreate;
 	}
 	
 	public Cmd getCommand() {
@@ -43,7 +49,7 @@ public abstract class BaseCmd {
 	public void beforExec(){
 		logger.info("开始执行命令:"+command.getCmd());
 		//记录Cmd_log 日志到数据库
-		LogCmdDB.add(+command.getId());
+		LogCmdDB.add(command.getId(),userCreate);
 	}
 	/**
 	 * 指令具体操作

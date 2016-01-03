@@ -15,6 +15,35 @@ import com.zaq.smartHome.util.Constant;
  */
 public class CmdFactory {
 	/**
+	 * 创建一个远程带延时命令的指令
+	 * @param cmd
+	 * @param delay
+	 * @param userCreate
+	 * @return
+	 * @throws CmdNotFoundException
+	 */
+	public static BaseCmd newCommand(Cmd cmd ,Integer delay,Long userCreate) throws CmdNotFoundException{
+		BaseCmd baseCmd=null;
+		switch(cmd.getType()){
+			case Constant.TYPE_CMD_RED :
+				baseCmd=new RedCmd(cmd,delay,userCreate);
+				break;
+			case Constant.TYPE_CMD_RF_315:
+				baseCmd=new RF315Cmd(cmd,delay,userCreate);
+				break;
+			case Constant.TYPE_CMD_RF_433:
+				baseCmd=new RF433Cmd(cmd,delay,userCreate);
+				break;
+			case Constant.TYPE_CMD_GPIO:
+				baseCmd=new GpioCmd(cmd,delay,userCreate);
+				break;
+			default :
+				throw new CmdNotFoundException(cmd.getFunction()+"类型"+cmd.getType()+"的指令不存在");
+		}
+		
+		return baseCmd;
+	}
+	/**
 	 * 创建一个带延时命令的指令
 	 * @param cmd
 	 * @param delay

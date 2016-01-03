@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50546
 File Encoding         : 65001
 
-Date: 2016-01-02 20:07:15
+Date: 2016-01-03 18:34:19
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -50,55 +50,56 @@ CREATE TABLE `cmd_log` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `cmdId` bigint(20) DEFAULT NULL COMMENT '执行的命令',
   `timeCreate` datetime DEFAULT NULL COMMENT '执行的时间',
+  `userCreate` bigint(20) DEFAULT NULL COMMENT '远程操作人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8 COMMENT='命令日志';
 
 -- ----------------------------
 -- Records of cmd_log
 -- ----------------------------
-INSERT INTO `cmd_log` VALUES ('1', '1', '2015-12-30 19:47:08');
-INSERT INTO `cmd_log` VALUES ('2', '2', '2015-12-30 19:47:16');
-INSERT INTO `cmd_log` VALUES ('3', '1', '2015-12-30 19:47:25');
-INSERT INTO `cmd_log` VALUES ('4', '2', '2015-12-30 19:47:28');
-INSERT INTO `cmd_log` VALUES ('5', '1', '2015-12-30 19:47:34');
-INSERT INTO `cmd_log` VALUES ('6', '2', '2015-12-30 19:47:45');
-INSERT INTO `cmd_log` VALUES ('7', '1', '2015-12-30 19:48:28');
-INSERT INTO `cmd_log` VALUES ('8', '2', '2015-12-30 19:48:36');
-INSERT INTO `cmd_log` VALUES ('9', '3', '2015-12-30 19:49:07');
-INSERT INTO `cmd_log` VALUES ('10', '2', '2015-12-30 19:49:18');
-INSERT INTO `cmd_log` VALUES ('11', '1', '2015-12-30 19:49:27');
-INSERT INTO `cmd_log` VALUES ('12', '2', '2015-12-30 19:49:38');
-INSERT INTO `cmd_log` VALUES ('13', '3', '2015-12-30 21:31:02');
-INSERT INTO `cmd_log` VALUES ('14', '2', '2015-12-30 21:31:11');
-INSERT INTO `cmd_log` VALUES ('15', '3', '2015-12-30 21:39:40');
-INSERT INTO `cmd_log` VALUES ('16', '2', '2015-12-30 21:39:45');
-INSERT INTO `cmd_log` VALUES ('17', '3', '2015-12-30 21:39:49');
-INSERT INTO `cmd_log` VALUES ('18', '2', '2015-12-30 21:39:57');
-INSERT INTO `cmd_log` VALUES ('19', '3', '2015-12-30 22:15:26');
-INSERT INTO `cmd_log` VALUES ('20', '2', '2015-12-30 22:15:37');
-INSERT INTO `cmd_log` VALUES ('21', '3', '2015-12-30 22:16:56');
-INSERT INTO `cmd_log` VALUES ('22', '2', '2015-12-30 22:17:11');
-INSERT INTO `cmd_log` VALUES ('23', '3', '2015-12-30 22:17:33');
-INSERT INTO `cmd_log` VALUES ('24', '2', '2015-12-30 22:17:38');
-INSERT INTO `cmd_log` VALUES ('25', '1', '2015-12-31 09:18:36');
-INSERT INTO `cmd_log` VALUES ('26', '2', '2015-12-31 09:18:46');
-INSERT INTO `cmd_log` VALUES ('27', '1', '2015-12-31 09:18:53');
-INSERT INTO `cmd_log` VALUES ('28', '2', '2015-12-31 09:19:04');
-INSERT INTO `cmd_log` VALUES ('29', '1', '2015-12-31 09:19:14');
-INSERT INTO `cmd_log` VALUES ('30', '2', '2015-12-31 09:19:19');
-INSERT INTO `cmd_log` VALUES ('31', '1', '2015-12-31 10:19:31');
-INSERT INTO `cmd_log` VALUES ('32', '2', '2015-12-31 10:19:38');
-INSERT INTO `cmd_log` VALUES ('33', '1', '2015-12-31 10:25:16');
-INSERT INTO `cmd_log` VALUES ('34', '2', '2015-12-31 10:25:21');
-INSERT INTO `cmd_log` VALUES ('35', '1', '2015-12-31 10:25:32');
-INSERT INTO `cmd_log` VALUES ('36', '2', '2015-12-31 10:25:47');
-INSERT INTO `cmd_log` VALUES ('37', '3', '2015-12-31 10:33:54');
-INSERT INTO `cmd_log` VALUES ('38', '2', '2015-12-31 10:33:59');
-INSERT INTO `cmd_log` VALUES ('39', '1', '2015-12-31 10:34:22');
-INSERT INTO `cmd_log` VALUES ('40', '2', '2015-12-31 10:34:30');
-INSERT INTO `cmd_log` VALUES ('41', '2', '2015-12-31 10:34:37');
-INSERT INTO `cmd_log` VALUES ('42', '3', '2015-12-31 10:59:25');
-INSERT INTO `cmd_log` VALUES ('43', '2', '2015-12-31 10:59:47');
+INSERT INTO `cmd_log` VALUES ('1', '1', '2015-12-30 19:47:08', null);
+INSERT INTO `cmd_log` VALUES ('2', '2', '2015-12-30 19:47:16', null);
+INSERT INTO `cmd_log` VALUES ('3', '1', '2015-12-30 19:47:25', null);
+INSERT INTO `cmd_log` VALUES ('4', '2', '2015-12-30 19:47:28', null);
+INSERT INTO `cmd_log` VALUES ('5', '1', '2015-12-30 19:47:34', null);
+INSERT INTO `cmd_log` VALUES ('6', '2', '2015-12-30 19:47:45', null);
+INSERT INTO `cmd_log` VALUES ('7', '1', '2015-12-30 19:48:28', null);
+INSERT INTO `cmd_log` VALUES ('8', '2', '2015-12-30 19:48:36', null);
+INSERT INTO `cmd_log` VALUES ('9', '3', '2015-12-30 19:49:07', null);
+INSERT INTO `cmd_log` VALUES ('10', '2', '2015-12-30 19:49:18', null);
+INSERT INTO `cmd_log` VALUES ('11', '1', '2015-12-30 19:49:27', null);
+INSERT INTO `cmd_log` VALUES ('12', '2', '2015-12-30 19:49:38', null);
+INSERT INTO `cmd_log` VALUES ('13', '3', '2015-12-30 21:31:02', null);
+INSERT INTO `cmd_log` VALUES ('14', '2', '2015-12-30 21:31:11', null);
+INSERT INTO `cmd_log` VALUES ('15', '3', '2015-12-30 21:39:40', null);
+INSERT INTO `cmd_log` VALUES ('16', '2', '2015-12-30 21:39:45', null);
+INSERT INTO `cmd_log` VALUES ('17', '3', '2015-12-30 21:39:49', null);
+INSERT INTO `cmd_log` VALUES ('18', '2', '2015-12-30 21:39:57', null);
+INSERT INTO `cmd_log` VALUES ('19', '3', '2015-12-30 22:15:26', null);
+INSERT INTO `cmd_log` VALUES ('20', '2', '2015-12-30 22:15:37', null);
+INSERT INTO `cmd_log` VALUES ('21', '3', '2015-12-30 22:16:56', null);
+INSERT INTO `cmd_log` VALUES ('22', '2', '2015-12-30 22:17:11', null);
+INSERT INTO `cmd_log` VALUES ('23', '3', '2015-12-30 22:17:33', null);
+INSERT INTO `cmd_log` VALUES ('24', '2', '2015-12-30 22:17:38', null);
+INSERT INTO `cmd_log` VALUES ('25', '1', '2015-12-31 09:18:36', null);
+INSERT INTO `cmd_log` VALUES ('26', '2', '2015-12-31 09:18:46', null);
+INSERT INTO `cmd_log` VALUES ('27', '1', '2015-12-31 09:18:53', null);
+INSERT INTO `cmd_log` VALUES ('28', '2', '2015-12-31 09:19:04', null);
+INSERT INTO `cmd_log` VALUES ('29', '1', '2015-12-31 09:19:14', null);
+INSERT INTO `cmd_log` VALUES ('30', '2', '2015-12-31 09:19:19', null);
+INSERT INTO `cmd_log` VALUES ('31', '1', '2015-12-31 10:19:31', null);
+INSERT INTO `cmd_log` VALUES ('32', '2', '2015-12-31 10:19:38', null);
+INSERT INTO `cmd_log` VALUES ('33', '1', '2015-12-31 10:25:16', null);
+INSERT INTO `cmd_log` VALUES ('34', '2', '2015-12-31 10:25:21', null);
+INSERT INTO `cmd_log` VALUES ('35', '1', '2015-12-31 10:25:32', null);
+INSERT INTO `cmd_log` VALUES ('36', '2', '2015-12-31 10:25:47', null);
+INSERT INTO `cmd_log` VALUES ('37', '3', '2015-12-31 10:33:54', null);
+INSERT INTO `cmd_log` VALUES ('38', '2', '2015-12-31 10:33:59', null);
+INSERT INTO `cmd_log` VALUES ('39', '1', '2015-12-31 10:34:22', null);
+INSERT INTO `cmd_log` VALUES ('40', '2', '2015-12-31 10:34:30', null);
+INSERT INTO `cmd_log` VALUES ('41', '2', '2015-12-31 10:34:37', null);
+INSERT INTO `cmd_log` VALUES ('42', '3', '2015-12-31 10:59:25', null);
+INSERT INTO `cmd_log` VALUES ('43', '2', '2015-12-31 10:59:47', null);
 
 -- ----------------------------
 -- Table structure for `user`
@@ -110,12 +111,30 @@ CREATE TABLE `user` (
   `password` varchar(64) DEFAULT NULL,
   `type` smallint(6) DEFAULT NULL COMMENT '用户类型 0：管理员 1：普通人员',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='用户表';
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES ('1', 'admin', '123', '0');
+INSERT INTO `user` VALUES ('1', 'admin', 'c4ca4238a0b923820dcc509a6f75849b', '0');
+
+-- ----------------------------
+-- Table structure for `user_log`
+-- ----------------------------
+DROP TABLE IF EXISTS `user_log`;
+CREATE TABLE `user_log` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `timeCreate` datetime NOT NULL COMMENT '创建时间',
+  `usernameCreate` varchar(20) NOT NULL COMMENT '用户名',
+  `ip` varchar(32) NOT NULL COMMENT 'IP地址',
+  `agent` varchar(512) DEFAULT NULL,
+  `remark` varchar(512) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8 COMMENT='用户登陆登出日志';
+
+-- ----------------------------
+-- Records of user_log
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for `yuyin`

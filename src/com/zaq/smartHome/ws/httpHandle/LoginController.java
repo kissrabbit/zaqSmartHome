@@ -1,8 +1,10 @@
 package com.zaq.smartHome.ws.httpHandle;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.shiro.SecurityUtils;
@@ -12,7 +14,6 @@ import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.apache.shiro.subject.Subject;
 import org.springframework.context.annotation.Scope;
@@ -22,7 +23,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.zaq.smartHome.db.LogUserDB;
 import com.zaq.smartHome.db.bean.User;
+import com.zaq.smartHome.util.Constant;
 
 /**
  * 登陆请求处理
@@ -33,10 +36,14 @@ import com.zaq.smartHome.db.bean.User;
 @RestController
 @Scope("prototype")
 public class LoginController extends BaseController{
-	
+	/**
+	 * 首页导航
+	 * @param modelAndView
+	 * @return
+	 */
 	@RequestMapping("/")
 	public ModelAndView loginView(ModelAndView modelAndView){
-		if (SecurityUtils.getSubject().isAuthenticated()) {
+		if (SecurityUtils.getSubject().isAuthenticated()||SecurityUtils.getSubject().isRemembered()) {
 			//通过认证的进入主界面
 			modelAndView.setViewName("redirect:/index");
 		}else{
@@ -50,16 +57,30 @@ public class LoginController extends BaseController{
 		return modelAndView;
 	}
 	
+	/**
+	 * 登陆操作
+	 * @param modelAndView
+	 * @param username
+	 * @param password
+	 * @param rememberMe
+	 * @param response
+	 * @param request
+	 * @return
+	 */
 	@RequestMapping("/login")
 	public ModelAndView login(ModelAndView modelAndView,@RequestParam(value = "userName", required = true) String username, @RequestParam(value = "password", required = true) String password,
 			@RequestParam(value = "rememberMe", required = false) String rememberMe, HttpServletResponse response,HttpServletRequest request){
-		if (SecurityUtils.getSubject().isAuthenticated()) {
+		if (SecurityUtils.getSubject().isAuthenticated()||SecurityUtils.getSubject().isRemembered()) {
 			//已通过认证的进入主界面
 			modelAndView.setViewName("redirect:/index");
 		}else{
 			//登陆验证
-			UsernamePasswordToken token = new UsernamePasswordToken(username, password);
-			token.setRememberMe(true);
+			UsernamePasswordToken token = new UsernamePasswordToken(username,DigestUtils.md5Hex(password));
+			//记住密码
+			if("on".equals(rememberMe)){
+				token.setRememberMe(true);
+			}
+			
 			logger.debug("为了验证登录用户而封装的token为" + ReflectionToStringBuilder.toString(token, ToStringStyle.MULTI_LINE_STYLE));
 			// 获取当前的Subject
 			Subject currentUser = SecurityUtils.getSubject();
@@ -92,12 +113,19 @@ public class LoginController extends BaseController{
 			// 验证是否登录成功
 			if (currentUser.isAuthenticated()) {
 				//防止shiro在request再开线程找不到SecurityManager引起的BUG
-				request.getSession().setAttribute("isAuth", "auth");
+				request.getSession().setAttribute(Constant.IS_AUTH, currentUser);
 				logger.info("用户[" + username + "]登录认证通过");
-				modelAndView.setViewName("redirect:/index");
+				if(currentUser.hasRole(Constant.ROLE_ADMIN)){
+					modelAndView.setViewName("redirect:/admin/");
+				}else{
+					modelAndView.setViewName("redirect:/index");
+				}
+				LogUserDB.add(request.getRemoteAddr(), request.getHeader("User-Agent"), username, "用户[" + username + "]登录认证通过");
+				
 			} else {
 				token.clear();
 				modelAndView.setViewName("login");
+				LogUserDB.add(request.getRemoteAddr(), request.getHeader("User-Agent"), username, "用户[" + username + "]登录认证失败："+modelAndView.getModel().get("message_login"));
 			}
 			
 		}
@@ -105,19 +133,37 @@ public class LoginController extends BaseController{
 		return modelAndView;
 	}
 	
+	/**
+	 * 用户操作首页
+	 * @param modelAndView
+	 * @return
+	 */
 	@RequestMapping("/index")
-	@RequiresAuthentication
+	@RequiresUser
 	public ModelAndView index(ModelAndView modelAndView){
 		modelAndView.setViewName("index");
 		return modelAndView;
 	}
 	
+	/**
+	 * 退出登陆
+	 * @param modelAndView
+	 * @param request
+	 * @return
+	 */
 	@RequestMapping("/logout")
-	public ModelAndView logout(ModelAndView modelAndView,HttpServletRequest request){
+	public ModelAndView logout(ModelAndView modelAndView,HttpServletRequest request, HttpServletResponse response){
 		Subject subject = SecurityUtils.getSubject();
-		if (subject.isAuthenticated()) {
+		if (subject.isAuthenticated()||subject.isRemembered()) {
+			LogUserDB.add(request.getRemoteAddr(), request.getHeader("User-Agent"), ((User)subject.getPrincipal()).getUsername(), "用户[" + ((User)subject.getPrincipal()).getUsername() + "]退出登录");
 			logger.info("用户" + ((User)subject.getPrincipal()).getUsername() + "退出登录");
-			subject.logout(); // session 会销毁，在SessionListener监听session销毁，清理权限缓存
+			if(subject.isAuthenticated()){
+				subject.logout(); // session 会销毁，在SessionListener监听session销毁，清理权限缓存
+			}else{
+				Cookie cookie=new Cookie(Constant.REMEMBER_ME, null);
+				cookie.setMaxAge(0);
+				response.addCookie(cookie);//清除客户端rememberMe的cookie
+			}
 			request.getSession().invalidate();
 		}
 		modelAndView.setViewName("redirect:/");

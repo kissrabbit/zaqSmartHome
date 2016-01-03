@@ -29,6 +29,9 @@ public class GpioCmd extends BaseCmd{
 	public GpioCmd(Cmd cmd, Integer delay) {
 		super(cmd, delay);
 	}
+	public GpioCmd(Cmd cmd, Integer delay,Long userCreate) {
+		super(cmd, delay,userCreate);
+	}
 
 	/**
 	 * 执行gpio类型的引脚控制指令

@@ -57,6 +57,16 @@ html,body {
 								</div>
 							</div>
 						</div>
+							<div class="col-xs-12  ">
+								<div class="input-group">
+									<section class="model-1">
+									  <div class="checkbox">
+									    <input id="rememberMe" name="rememberMe" type="checkbox">记住密码一个月</label>
+									    <label></label>
+									  </div>
+									</section>   
+								</div>
+							</div>
 						<div class="form-group form-actions">
 							<div class="col-xs-4 col-xs-offset-4 ">
 								<button type="submit" class="btn btn-sm btn-info">

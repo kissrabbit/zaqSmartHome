@@ -18,6 +18,9 @@ public class RF433Cmd extends BaseCmd{
 	public RF433Cmd(Cmd cmd,Integer delay){
 		super(cmd, delay);
 	}
+	public RF433Cmd(Cmd cmd, Integer delay,Long userCreate) {
+		super(cmd, delay,userCreate);
+	}
 	@Override
 	protected void exec() {
 		//发送无线指令码

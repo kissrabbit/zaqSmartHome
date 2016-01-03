@@ -17,6 +17,9 @@ public class RedCmd extends BaseCmd{
 	public RedCmd(Cmd cmd,Integer delay){
 		super(cmd, delay);
 	}
+	public RedCmd(Cmd cmd, Integer delay,Long userCreate) {
+		super(cmd, delay,userCreate);
+	}
 
 	@Override
 	protected void exec() {

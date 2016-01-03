@@ -16,6 +16,9 @@ public class RF315Cmd extends BaseCmd{
 	public RF315Cmd(Cmd cmd,Integer delay){
 		super(cmd, delay);
 	}
+	public RF315Cmd(Cmd cmd, Integer delay,Long userCreate) {
+		super(cmd, delay,userCreate);
+	}
 
 	@Override
 	protected void exec() {

@@ -1,5 +1,6 @@
 package com.zaq.smartHome.db.bean;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -8,7 +9,8 @@ import java.util.Date;
  * 2015年12月21日
  *
  */
-public class YuYin {
+public class YuYin implements Serializable{
+	private static final long serialVersionUID = 1L;
 	private Long id;
 	/**
 	 * 文件路径

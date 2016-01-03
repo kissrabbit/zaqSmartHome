@@ -10,15 +10,15 @@ import java.util.Date;
  *
  */
 public class LogCmdDB extends BaseDB{
-	private final static String addSql="INSERT INTO cmd_log (cmdId,timeCreate) VALUES (?,?)";
+	private final static String addSql="INSERT INTO cmd_log (cmdId,timeCreate,userCreate) VALUES (?,?,?)";
 
 	/**
 	 * 添加一条指令使用的日志
 	 * @param cmdId
 	 */
-	public static void add(Long cmdId){
+	public static void add(Long cmdId,Long userCreate){
 		try {
-			dao.storeInfo(addSql,cmdId,new Date());
+			dao.storeInfo(addSql,cmdId,new Date(),userCreate);
 		} catch (SQLException e) {
 			logger.error("添加指令日志失败", e);
 		}

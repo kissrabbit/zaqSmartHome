@@ -1,12 +1,18 @@
 package com.zaq.smartHome.ws;
 
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.shiro.codec.Base64;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.zaq.smartHome.util.Constant;
 
 /**
  * shiro 配置中心
@@ -16,10 +22,29 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class ShiroConfig {
-	
+	public static void main(String[] args) {
+		System.out.println("freshzcn12345678".length());
+		System.out.println(DigestUtils.md5Hex("1"));
+		System.out.println(Base64.encodeToString("freshzcn12345678".getBytes()));
+	}
+	/**
+	 * shiro安全认证管理器
+	 * @return
+	 */
 	@Bean(name="securityManager")
 	public DefaultWebSecurityManager securityManager(){
 		DefaultWebSecurityManager defaultWebSecurityManager=new DefaultWebSecurityManager(new MyRealm());
+		
+		CookieRememberMeManager cookieRememberMeManager=new CookieRememberMeManager();
+		
+		SimpleCookie cookie=new SimpleCookie(Constant.REMEMBER_ME);
+		cookie.setHttpOnly(true);
+		cookie.setMaxAge(31104000);//1年
+		
+		cookieRememberMeManager.setCookie(cookie);
+		cookieRememberMeManager.setCipherKey(Base64.decode("ZnJlc2h6Y24xMjM0NTY3OA=="));//AES密匙
+		
+		defaultWebSecurityManager.setRememberMeManager(cookieRememberMeManager);
 		return defaultWebSecurityManager;
 	}
 	

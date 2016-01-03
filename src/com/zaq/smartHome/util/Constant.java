@@ -6,6 +6,14 @@ package com.zaq.smartHome.util;
  *
  */
 public interface Constant {
+	/**
+	 * shiro 生成的cookie名称
+	 */
+	public static final String REMEMBER_ME="rememberMeZAQ";
+	
+	public static final String IS_AUTH="isAuth";
+	
+	public static final String ROLE_ADMIN="ROLE_ADMIN";
 	
 	public static final String ASK_NOT_FIND_CMD="没有匹配到可执行的命令"; 
 	

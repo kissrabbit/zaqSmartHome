@@ -1,5 +1,6 @@
 package com.zaq.smartHome.ws.httpHandle;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.zaq.smartHome.controll.CmdFactory;
 import com.zaq.smartHome.db.CmdDB;
 import com.zaq.smartHome.db.bean.Cmd;
+import com.zaq.smartHome.db.bean.User;
 
 /**
  * 指令的http请求
@@ -36,9 +38,9 @@ public class CommandController extends BaseController{
 			logger.error("指令["+id+"]不存在");
 			return false;
 		}
-		
+		User user= (User) SecurityUtils.getSubject().getPrincipals().getPrimaryPrincipal();
 		try {
-			CmdFactory.newCommand(cmd, delay).run();
+			CmdFactory.newCommand(cmd, delay,user.getId()).run();
 		} catch (Exception e) {
 			logger.error("执行指令["+id+"]异常", e);
 			return false;

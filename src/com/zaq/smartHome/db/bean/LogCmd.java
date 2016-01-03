@@ -1,5 +1,6 @@
 package com.zaq.smartHome.db.bean;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -8,8 +9,10 @@ import java.util.Date;
  * 2015年12月21日
  *
  */
-public class LogCmd {
+public class LogCmd implements Serializable{
+	private static final long serialVersionUID = 1L;
 	private Long id;
+	private User userCreate;//远程操作人
 	private Cmd cmd; //执行的指令
 	private Date timeCreate;//执行时间
 	public Long getId() {
@@ -29,5 +32,11 @@ public class LogCmd {
 	}
 	public void setTimeCreate(Date timeCreate) {
 		this.timeCreate = timeCreate;
+	}
+	public User getUserCreate() {
+		return userCreate;
+	}
+	public void setUserCreate(User userCreate) {
+		this.userCreate = userCreate;
 	}
 }
