@@ -193,7 +193,7 @@
 	  <div class="modal-dialog">
 	    <div class="modal-content">
 	        <div class="modal-header">
-	            <h3 id="myModalLabel">上传xml文件</h3>
+	            <h3 id="myModalLabel">上传文件</h3>
 	        </div>
 	        <div class="modal-body">
 	            <input type="file" name="file" id="uploadInputFile" class="file btn btn-primary" data-preview-file-type="text">

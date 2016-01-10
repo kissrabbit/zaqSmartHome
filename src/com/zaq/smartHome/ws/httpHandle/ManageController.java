@@ -29,7 +29,6 @@ public class ManageController extends BaseController{
 	 * @return
 	 */
 	@RequiresRoles(Constant.ROLE_ADMIN)
-	@RequiresAuthentication
 	@RequestMapping("")
 	public ModelAndView index(ModelAndView modelAndView){
 		User user= (User) SecurityUtils.getSubject().getPrincipal();

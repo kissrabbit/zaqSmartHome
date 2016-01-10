@@ -3,10 +3,6 @@ $(function() {
 	$('#alertMessage').click(function() {
 		hideTop();
 	});
-	//上传文件组件关闭刷新当前页
-	$('#uploadFile').on('hide.bs.modal', function () {
-			showPage("admin/app/"+$("#appId").val());
-	})
 });
 
 /**
@@ -31,7 +27,7 @@ function hideTop() {
 }
 //显示错误提示
 function showError(str) {
-	$('#alertMessage').addClass('error').html(str).stop(true, true).show().animate({
+	$('#alertMessage').removeClass().addClass('error').html(str).stop(true, true).show().animate({
 		opacity : 0.6,
 		right:'0'
 	}, 500);
@@ -40,7 +36,7 @@ function showError(str) {
 }
  
 function showMsg(str) {
-	$('#alertMessage').addClass('success').html(str).stop(true, true).show().animate({
+	$('#alertMessage').removeClass().addClass('success').html(str).stop(true, true).show().animate({
 		opacity : 0.6,
 		right:'0'
 	}, 500);

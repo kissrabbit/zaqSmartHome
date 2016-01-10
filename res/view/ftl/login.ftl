@@ -7,10 +7,11 @@
 <title>登录界面</title>
 
 <link rel="stylesheet" type="text/css"
-	href="lib/bootstrap/css/bootstrap.min.css" />
-<link rel="stylesheet" type="text/css" href="resources/css/login.css" />
-<script src="lib/jquery-1.11.1.min.js" type="text/javascript"></script>
-<script src="lib/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+	href="/lib/bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="/resources/css/login.css" />
+<link rel="stylesheet" type="text/css" href="/resources/css/style.css" />
+<script src="/lib/jquery-1.11.1.min.js" type="text/javascript"></script>
+<script src="/lib/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
 <style type="text/css">
 html,body {
 	height: 100%;

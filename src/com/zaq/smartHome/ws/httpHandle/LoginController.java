@@ -156,15 +156,8 @@ public class LoginController extends BaseController{
 		Subject subject = SecurityUtils.getSubject();
 		if (subject.isAuthenticated()||subject.isRemembered()) {
 			LogUserDB.add(request.getRemoteAddr(), request.getHeader("User-Agent"), ((User)subject.getPrincipal()).getUsername(), "用户[" + ((User)subject.getPrincipal()).getUsername() + "]退出登录");
+			subject.logout(); // session 会销毁，在SessionListener监听session销毁，清理权限缓存
 			logger.info("用户" + ((User)subject.getPrincipal()).getUsername() + "退出登录");
-			if(subject.isAuthenticated()){
-				subject.logout(); // session 会销毁，在SessionListener监听session销毁，清理权限缓存
-			}else{
-				Cookie cookie=new Cookie(Constant.REMEMBER_ME, null);
-				cookie.setMaxAge(0);
-				response.addCookie(cookie);//清除客户端rememberMe的cookie
-			}
-			request.getSession().invalidate();
 		}
 		modelAndView.setViewName("redirect:/");
 		return modelAndView;
