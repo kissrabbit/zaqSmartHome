@@ -118,7 +118,7 @@
 			<li>
 				<ul class="dashboard-menu nav nav-list collapse in">
 					<li>
-						<a href="#page-main" class="panel-heading" data-toggle="collapse">
+						<a href="#" onclick='showPage("/admin/cmd/","菜单列表/指令管理")' class="panel-heading" data-toggle="collapse">
 							<span class="fa fa-caret-right"></span> 指令管理</a>
 					</li>
 					<li>
