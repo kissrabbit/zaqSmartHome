@@ -21,6 +21,8 @@ public class CmdDB  extends BaseDB{
 	
 	private static final String delCmd="update cmd set isDel=1 where id=?";
 	private static final String getAll="select * from cmd  where isDel=0";
+	private static final String getAllDelayCmds="select * from cmd  where isDel=0 and autoDelayExecId is null";
+	
 	private static final String updateCmd="update cmd set function=?,cmd=?,py=?,type=?,wirelessProtocol=?,code=?,autoDelayTime=?,autoDelayExecId=? where id=?";
 	private static final String addCmd="insert into cmd(function,cmd,py,type,code,wirelessProtocol,isSys,isDel,timeCreate,autoDelayTime,autoDelayExecId) values(?,?,?,?,?,?,1,0,?,?,?)";
 	
@@ -160,6 +162,21 @@ public class CmdDB  extends BaseDB{
 		}
 		
 		return retVal;
+	}
+	
+	/**
+	 * 获取所有延时指令
+	 * @return
+	 */
+	public static List<Cmd> getAllDelayCmds() {
+		List<Cmd> cmds=null;
+		
+		try {
+			cmds = dao.queryForOList(Cmd.class, getAllDelayCmds);
+		} catch (SQLException e) {
+			logger.error("查询所有延时指令失败", e);
+		}
+		return cmds;
 	}
 	
 }

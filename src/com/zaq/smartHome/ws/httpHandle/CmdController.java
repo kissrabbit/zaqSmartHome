@@ -28,7 +28,7 @@ public class CmdController extends BaseController{
 	 * @return
 	 */
 	@RequiresRoles(Constant.ROLE_ADMIN)
-	@RequestMapping("")
+	@RequestMapping("/")
 	public ModelAndView index(ModelAndView modelAndView){
 		
 		List<Cmd> cmds=CmdDB.getAll();
@@ -47,7 +47,9 @@ public class CmdController extends BaseController{
 	@RequestMapping("/{cmdId}")
 	public ModelAndView showCmd(@PathVariable("cmdId") Long cmdId,ModelAndView modelAndView){
 		Cmd cmd=CmdDB.getByID(cmdId);
+		List<Cmd> delayCmds=CmdDB.getAllDelayCmds();
 		modelAndView.addObject("cmd", cmd);
+		modelAndView.addObject("delayCmds", delayCmds);
 		modelAndView.setViewName("admin/cmd/cmdInfo");
 		return modelAndView;
 	}

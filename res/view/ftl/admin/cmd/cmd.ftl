@@ -1,7 +1,7 @@
 <script src="/resources/js/Cmd.js" type="text/javascript"></script>	
 <div class="btn-toolbar list-toolbar">
   <div class="btn-group">
-  	<a class="btn btn-primary" href="#" onclick="showPage('/admin/cmd/addCmd')" data-toggle="modal" class="padding-right-small"><i class="fa fa-plus"></i> 新增用户 </a>
+  	<a class="btn btn-primary" href="#" onclick="showPage('/admin/cmd/addCmd')" data-toggle="modal" class="padding-right-small"><i class="fa fa-plus"></i> 新增指令 </a>
   </div>
 </div>
 <table class="table">
