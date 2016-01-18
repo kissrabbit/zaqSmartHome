@@ -32,7 +32,7 @@ public class RF433ReceiveTest
     GpioController gpio = GpioFactory.getInstance();
     
     
-    GpioPinDigitalInput myButton = gpio.provisionDigitalInputPin(RaspiPin.GPIO_28, PinPullResistance.PULL_DOWN);
+    GpioPinDigitalInput myButton = gpio.provisionDigitalInputPin(RaspiPin.GPIO_26, PinPullResistance.PULL_DOWN);
     myButton.addListener(new GpioPinListener[] { new GpioPinListenerDigital()
     {
       int duration;

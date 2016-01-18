@@ -22,7 +22,7 @@ public class RF433SendTest {
 
 	public static void main(String[] args) {
 
-		RF433SendTest client = new RF433SendTest(RaspiPin.GPIO_29, 1);
+		RF433SendTest client = new RF433SendTest(RaspiPin.GPIO_27, 1);
 
 		String cod = "";
 		while (!cod.equalsIgnoreCase("exit")) {
